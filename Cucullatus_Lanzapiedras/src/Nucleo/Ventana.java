@@ -1,4 +1,4 @@
-package Escenario;
+package Nucleo;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
  */
 public class Ventana extends JFrame implements Runnable{
     
-    private Panel panel;
+    private PanelJuego juego;
     private boolean ejecutandose;
     
     public Ventana() throws Exception{
@@ -22,9 +22,10 @@ public class Ventana extends JFrame implements Runnable{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(false); // Eliminamos los botones ( - [] X ).
         setExtendedState(MAXIMIZED_BOTH); // Pantalla completa.
-        panel = new Panel(getAltoPantalla(), getAnchoPantalla());
-        ejecutandose = panel.isEjecutandose();
-        add(panel);
+        juego = new PanelJuego(getAltoPantalla(), getAnchoPantalla());
+        ejecutandose = juego.isEjecutandose();
+        add(juego);
+        addKeyListener(juego);
         setVisible(true);
         
         // Creamos nuestro hilo.
@@ -48,7 +49,7 @@ public class Ventana extends JFrame implements Runnable{
     public void run() {
         while(ejecutandose) {
             try {
-                panel.repaint();
+                juego.repaint();
                 Thread.sleep(30);
                 
             } catch (InterruptedException ex) {

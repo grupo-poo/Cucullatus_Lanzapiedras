@@ -1,31 +1,31 @@
 package Personajes;
 
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
-import javax.imageio.ImageIO;
 
 /**
  * @author Milton Lenis
  */
 public class Jugador {
     
-    int ancho, alto, x, y;
+    int ancho, alto;    // Dimensiones
+    int x, y;   // Posiciones
+    boolean UP, DOWN, LEFT, RIGHT;  // Teclas
+    
     BufferedImage imagen;
     
-    public Jugador(String dirImagen) throws IOException {
-        
-        // Incorporamos nuestra imagen para el jugador
-        URL url = this.getClass().getResource(dirImagen);
-        imagen = ImageIO.read(url);
+    public Jugador(BufferedImage imagen) {
+        this.imagen = imagen;
         
         // Por defecto el jugador tiene las dimensiones de la imagen original.
         ancho = imagen.getWidth();
         alto = imagen.getHeight();
         
+        UP = false; DOWN = false; LEFT = false; RIGHT = false;
+        
         // Posiciones por defecto
-        x = 4;
+        x = 40;
         y = 590;
     }
     
@@ -33,25 +33,46 @@ public class Jugador {
         g.drawImage(imagen, x, y, ancho, alto, null);
     }
     
-    public void actualizar() {
-        mover();
+    public void mover() {
+        if (RIGHT) {
+            x+=3;
+        }else if (LEFT) {
+            x-=3;
+        }else if (UP) {
+            y-=3;
+        }else if (DOWN) {
+            y+=3;
+        }
     }
     
-    int dx = 3;
-    public void mover() {
-        /**
-         * Esto es solo un simple programa de ejemplo para mostrar
-         * el lugar que tenemos que modificar para que nuestro personaje
-         * se mueva como queremos.
-         */
-        ///////////////////////////////////////
-        if (x < 200 && x > 2) {
-            x+=dx;
-        } else {
-            dx = -dx;
-            x+=dx;
+    public void teclaPresionada(KeyEvent e) {
+        //Obtenemos el codigo de tecla el objeto KeyEvent
+        int codigoTecla = e.getKeyCode();
+        
+        if (codigoTecla == KeyEvent.VK_RIGHT) {
+            RIGHT = true;
+        }else if (codigoTecla == KeyEvent.VK_LEFT) {
+            LEFT = true;
+        }else if (codigoTecla == KeyEvent.VK_UP) {
+            UP = true;
+        }else if (codigoTecla == KeyEvent.VK_DOWN) {
+            DOWN = true;
         }
-        ///////////////////////////////////////
+    }
+    
+    public void teclaSoltada(KeyEvent e) {
+        //Obtenemos el codigo de tecla el objeto KeyEvent
+        int codigoTecla = e.getKeyCode();
+        
+        if (codigoTecla == KeyEvent.VK_RIGHT) {
+            RIGHT = false;
+        }else if (codigoTecla == KeyEvent.VK_LEFT) {
+            LEFT = false;
+        }else if (codigoTecla == KeyEvent.VK_UP) {
+            UP = false;
+        }else if (codigoTecla == KeyEvent.VK_DOWN) {
+            DOWN = false;
+        }
     }
     
     public BufferedImage getImagen() {

@@ -1,10 +1,7 @@
-package ElementosEscenario;
+package Escenario;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
-import javax.imageio.ImageIO;
 
 /**
  * @author Milton Lenis
@@ -14,12 +11,8 @@ public class Fondo {
     int ancho, alto, x, y;
     BufferedImage imagen;
     
-    public Fondo(String dirImagen) throws IOException {
-        
-        // Incorporamos nuestra imagen para el fondo.
-        URL url = this.getClass().getResource(dirImagen);
-        imagen = ImageIO.read(url);
-                
+    public Fondo(BufferedImage imagen) {
+        this.imagen = imagen;
         
         // Por defecto el fondo tiene las dimensiones de la imagen original.
         ancho = imagen.getWidth();

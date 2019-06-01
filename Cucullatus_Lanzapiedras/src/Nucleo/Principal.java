@@ -1,4 +1,4 @@
-package Escenario;
+package Nucleo;
 
 import javax.swing.JOptionPane;
 
