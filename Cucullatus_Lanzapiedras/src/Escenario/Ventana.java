@@ -1,18 +1,19 @@
 package Escenario;
 
-import java.awt.Color;
-import java.io.IOException;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
- * Crea la ventana del juego.
  * @author Milton Lenis
  */
-public class Ventana extends JFrame{
+public class Ventana extends JFrame implements Runnable{
     
-    //private TableroJuego lienzo;
+    private Panel panel;
+    private boolean ejecutandose;
     
-    public Ventana() throws IOException{
+    public Ventana() throws Exception{
          /*Cuando cerramos una ventana el programa continua ejecutandose,
          * para detenerlo tenemos que hacerlo manualmente. Con el metodo
          * setDefaultCloseOperation el programa se detiene cuando se
@@ -21,11 +22,40 @@ public class Ventana extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(false); // Eliminamos los botones ( - [] X ).
         setExtendedState(MAXIMIZED_BOTH); // Pantalla completa.
-        setBackground(Color.getHSBColor(0.541f , 0.40f, 0.85f));
+        panel = new Panel(getAltoPantalla(), getAnchoPantalla());
+        ejecutandose = panel.isEjecutandose();
+        add(panel);
         setVisible(true);
+        
+        // Creamos nuestro hilo.
+        Thread animacion = new Thread(this);
+        animacion.start();
     }
     
-
+    public int getAltoPantalla() {
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Dimension dim = tk.getScreenSize();
+        return (int) dim.getHeight();
+    }
     
+    public int getAnchoPantalla() {
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Dimension dim = tk.getScreenSize();
+        return (int) dim.getWidth();
+    }
 
+    @Override
+    public void run() {
+        while(ejecutandose) {
+            try {
+                panel.repaint();
+                Thread.sleep(30);
+                
+            } catch (InterruptedException ex) {
+                JOptionPane.showMessageDialog(null,"Error con "
+                                                 + "la velocidad del hilo");
+            }
+        }
+    }
+    
 }
