@@ -11,14 +11,17 @@ import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import Control.Teclado;
+
 
 /**
  * Dibujamos todo en el panel que va sobre la ventana del juego.
  * @author Milton Lenis
  */
-public class PanelJuego extends JPanel implements KeyListener{
+public class PanelJuego extends JPanel  {
     
     private Jugador jugador;
+    private Teclado teclado;
     private Fondo fondo1;
     private Mensaje mensaje1;
     private int altoPantalla;
@@ -28,6 +31,13 @@ public class PanelJuego extends JPanel implements KeyListener{
     public PanelJuego(int altoPantalla, int anchoPantalla) throws Exception {
         this.altoPantalla = altoPantalla;
         this.anchoPantalla = anchoPantalla;
+        this.teclado=new Teclado();
+        
+        //Hace que desde el panel se realicen controles de teclado 
+        this.setFocusable(true);
+       
+        addKeyListener(teclado);
+       
         inicializar();
     }
     
@@ -62,7 +72,12 @@ public class PanelJuego extends JPanel implements KeyListener{
         url = this.getClass().getResource("Sprites/Cucullatus.png");
         imagen = ImageIO.read(url);
         jugador = new Jugador(imagen);
+        //Asignacion del jugador al teclado, quizás haya que refinarlo
+        teclado.jugador=jugador;
     }
+    
+    
+    
     
     public void dibujar(Graphics g) {
         fondo1.dibujar(g);
@@ -73,11 +88,27 @@ public class PanelJuego extends JPanel implements KeyListener{
     public void actualizar(){
         fondo1.actualizar();
         mensaje1.actualizar();
-        jugador.mover();
+        
+        //En cada actualizacion se toma en cuenta las teclas presionadas para así modificar su posición
+        teclado.actualizar();
+      
+        
+        
     }
+    
 
     public boolean isEjecutandose() {
         return ejecutandose;
+    }
+
+    
+    
+    public Jugador getJugador() {
+        return jugador;
+    }
+
+    public void setJugador(Jugador jugador) {
+        this.jugador = jugador;
     }
     
     /**
@@ -90,25 +121,7 @@ public class PanelJuego extends JPanel implements KeyListener{
         dibujar(g);
         actualizar();
     }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        jugador.teclaPresionada(e);
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        jugador.teclaSoltada(e);
-    }
     
-        @Override
-    public void keyTyped(KeyEvent e) {
-        /**
-         * Este metodo funciona de forma muy parecida al KeyPressed
-         * con la diferencia de que KeyPressed reconoce todas las teclas
-         * del teclado mientras que KeyTyped solo los caracteres Unicode
-         * por tanto, no será útil implementarlo en el juego.
-         */
-    }
+    
     
 }
