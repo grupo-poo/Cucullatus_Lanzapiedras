@@ -1,7 +1,7 @@
 package Personajes;
 
+import Control.Teclado;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 /**
@@ -34,44 +34,14 @@ public class Jugador {
     }
     
     public void mover() {
-        if (RIGHT) {
+        if (Teclado.derecha) {
             x+=3;
-        }else if (LEFT) {
+        }else if (Teclado.izquierda) {
             x-=3;
-        }else if (UP) {
+        }else if (Teclado.arriba) {
             y-=3;
-        }else if (DOWN) {
+        }else if (Teclado.abajo) {
             y+=3;
-        }
-    }
-    
-    public void teclaPresionada(KeyEvent e) {
-        //Obtenemos el codigo de tecla el objeto KeyEvent
-        int codigoTecla = e.getKeyCode();
-        
-        if (codigoTecla == KeyEvent.VK_RIGHT) {
-            RIGHT = true;
-        }else if (codigoTecla == KeyEvent.VK_LEFT) {
-            LEFT = true;
-        }else if (codigoTecla == KeyEvent.VK_UP) {
-            UP = true;
-        }else if (codigoTecla == KeyEvent.VK_DOWN) {
-            DOWN = true;
-        }
-    }
-    
-    public void teclaSoltada(KeyEvent e) {
-        //Obtenemos el codigo de tecla el objeto KeyEvent
-        int codigoTecla = e.getKeyCode();
-        
-        if (codigoTecla == KeyEvent.VK_RIGHT) {
-            RIGHT = false;
-        }else if (codigoTecla == KeyEvent.VK_LEFT) {
-            LEFT = false;
-        }else if (codigoTecla == KeyEvent.VK_UP) {
-            UP = false;
-        }else if (codigoTecla == KeyEvent.VK_DOWN) {
-            DOWN = false;
         }
     }
     

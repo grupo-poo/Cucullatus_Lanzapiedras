@@ -4,24 +4,21 @@ import Escenario.Fondo;
 import Escenario.Mensaje;
 import Personajes.Jugador;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import Control.Teclado;
 
 
 /**
  * Dibujamos todo en el panel que va sobre la ventana del juego.
  * @author Milton Lenis
+ * @author diegocarvajal
  */
 public class PanelJuego extends JPanel  {
     
     private Jugador jugador;
-    private Teclado teclado;
     private Fondo fondo1;
     private Mensaje mensaje1;
     private int altoPantalla;
@@ -31,13 +28,6 @@ public class PanelJuego extends JPanel  {
     public PanelJuego(int altoPantalla, int anchoPantalla) throws Exception {
         this.altoPantalla = altoPantalla;
         this.anchoPantalla = anchoPantalla;
-        this.teclado=new Teclado();
-        
-        //Hace que desde el panel se realicen controles de teclado 
-        this.setFocusable(true);
-       
-        addKeyListener(teclado);
-       
         inicializar();
     }
     
@@ -72,12 +62,7 @@ public class PanelJuego extends JPanel  {
         url = this.getClass().getResource("Sprites/Cucullatus.png");
         imagen = ImageIO.read(url);
         jugador = new Jugador(imagen);
-        //Asignacion del jugador al teclado, quizás haya que refinarlo
-        teclado.jugador=jugador;
     }
-    
-    
-    
     
     public void dibujar(Graphics g) {
         fondo1.dibujar(g);
@@ -88,20 +73,12 @@ public class PanelJuego extends JPanel  {
     public void actualizar(){
         fondo1.actualizar();
         mensaje1.actualizar();
-        
-        //En cada actualizacion se toma en cuenta las teclas presionadas para así modificar su posición
-        teclado.actualizar();
-      
-        
-        
+        jugador.mover();
     }
     
-
     public boolean isEjecutandose() {
         return ejecutandose;
     }
-
-    
     
     public Jugador getJugador() {
         return jugador;
@@ -121,7 +98,4 @@ public class PanelJuego extends JPanel  {
         dibujar(g);
         actualizar();
     }
-    
-    
-    
 }

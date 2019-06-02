@@ -1,5 +1,6 @@
 package Nucleo;
 
+import Control.Teclado;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JFrame;
@@ -25,7 +26,7 @@ public class Ventana extends JFrame implements Runnable{
         juego = new PanelJuego(getAltoPantalla(), getAnchoPantalla());
         ejecutandose = juego.isEjecutandose();
         add(juego);
-        addKeyListener(juego);
+        addKeyListener(new Teclado());
         setVisible(true);
         
         // Creamos nuestro hilo.
