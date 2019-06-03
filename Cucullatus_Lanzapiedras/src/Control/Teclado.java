@@ -9,27 +9,26 @@ import java.awt.event.KeyListener;
  */
 public class Teclado implements KeyListener{
     
-    public static boolean arriba;
-    public static boolean abajo;
-    public static boolean derecha;
-    public static boolean izquierda;
+    public static boolean ARRIBA;
+    public static boolean ABAJO;
+    public static boolean DERECHA;
+    public static boolean IZQUIERDA;
     
     @Override
-    public void keyTyped(KeyEvent e) {  
-    }
+    public void keyTyped(KeyEvent e) {}
 
     @Override
     public void keyPressed(KeyEvent e) {
         int codTecla = e.getKeyCode();
         
         if (codTecla == KeyEvent.VK_UP) {
-            arriba = true;
+            ARRIBA = true;
         }else if (codTecla == KeyEvent.VK_DOWN) {
-            abajo = true;
+            ABAJO = true;
         }else if (codTecla == KeyEvent.VK_RIGHT) {
-            derecha = true;
+            DERECHA = true;
         }else if (codTecla == KeyEvent.VK_LEFT) {
-            izquierda = true;
+            IZQUIERDA = true;
         }
     }
 
@@ -38,13 +37,13 @@ public class Teclado implements KeyListener{
         int codTecla = e.getKeyCode();
      
         if (codTecla == KeyEvent.VK_UP) {
-            arriba = false;
+            ARRIBA = false;
         }else if (codTecla == KeyEvent.VK_DOWN) {
-            abajo = false;
+            ABAJO = false;
         }else if (codTecla == KeyEvent.VK_RIGHT) {
-            derecha = false;
+            DERECHA = false;
         }else if (codTecla == KeyEvent.VK_LEFT) {
-            izquierda = false;
+            IZQUIERDA = false;
         }
     }
     

@@ -1,5 +1,7 @@
 package Escenario;
 
+import Control.Teclado;
+import Personajes.Jugador;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -8,11 +10,13 @@ import java.awt.image.BufferedImage;
  */
 public class Fondo {
     
-    int ancho, alto, x, y;
-    BufferedImage imagen;
+    private int ancho, alto, x, y;
+    private byte avance;
+    private BufferedImage imagen;
     
-    public Fondo(BufferedImage imagen) {
+    public Fondo(BufferedImage imagen, byte avance) {
         this.imagen = imagen;
+        this.avance = avance; // Número de pixeles que se mueven con cada paso
         
         // Por defecto el fondo tiene las dimensiones de la imagen original.
         ancho = imagen.getWidth();
@@ -23,8 +27,14 @@ public class Fondo {
         g.drawImage(imagen, x, y, ancho, alto, null);
     }
     
-    public void actualizar() {
-        ////////////////////
+    public void actualizar(Jugador jugador) {
+        if (jugador.isDistanciaCritica()) {
+            if (Teclado.IZQUIERDA) {
+                x += avance;
+            }else if (Teclado.DERECHA) {
+                x -= avance;
+            }
+        }
     }
     
     public BufferedImage getImagen() {
