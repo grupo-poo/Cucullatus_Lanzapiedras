@@ -2,6 +2,7 @@ package Nucleo;
 
 import Escenario.Fondo;
 import Escenario.Mensaje;
+import Escenario.Obstaculo;
 import Personajes.Jugador;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -21,6 +22,10 @@ public class PanelJuego extends JPanel  {
     private Jugador jugador;
     private Fondo fondo1;
     private Mensaje mensaje1;
+    private Obstaculo tierra;
+    private Obstaculo suelo;
+    private Obstaculo suelo2;
+    private Obstaculo obstaculo1;
     
     private final int altoPantalla;
     private final int anchoPantalla;
@@ -65,20 +70,63 @@ public class PanelJuego extends JPanel  {
         url = this.getClass().getResource("Fondos/Mensaje.png");
         imagen = ImageIO.read(url);
         mensaje1 = new Mensaje(imagen, jugador.getPasos());
-        mensaje1.setX(100);     mensaje1.setY(400);
-        mensaje1.setAncho(300); mensaje1.setAlto(150);
+        mensaje1.setX(100);     
+        mensaje1.setY(400);
+        mensaje1.setAncho(300); 
+        mensaje1.setAlto(150);
+        
+        url = this.getClass().getResource("Fondos/Madera.png");
+        imagen = ImageIO.read(url);
+        tierra = new Obstaculo(imagen, jugador.getPasos());
+        tierra.setX(502);               
+        tierra.setY(402);
+        tierra.setAncho(47);            
+        tierra.setAlto(40);
+        tierra.setAtravesable(false);
+        
+        suelo = new Obstaculo(imagen, jugador.getPasos());
+        suelo.setAncho(600);           
+        suelo.setAlto(100);
+        suelo.setX(0);                
+        suelo.setY(altoPantalla - suelo.getAlto());
+        suelo.setAtravesable(false);
+        
+        suelo2 = new Obstaculo(imagen, jugador.getPasos());
+        suelo2.setAncho(600);           
+        suelo2.setAlto(100);
+        suelo2.setX(700);                
+        suelo2.setY(suelo.getY());
+        suelo2.setAtravesable(false);
+        
+        obstaculo1 = new Obstaculo(imagen, jugador.getPasos());
+        obstaculo1.setAncho(150);           
+        obstaculo1.setAlto(300);
+        obstaculo1.setX(850);                
+        obstaculo1.setY(suelo.getY() - obstaculo1.getAlto());
+        obstaculo1.setAtravesable(false);
+        
     }
     
     private void dibujar(Graphics g) {
         fondo1.dibujar(g);
         mensaje1.dibujar(g);
+        tierra.dibujar(g);
+        suelo.dibujar(g);
+        suelo2.dibujar(g);
+        obstaculo1.dibujar(g);
         jugador.dibujar(g);
     }
     
     private void actualizar(){
+        
         jugador.actualizar(anchoPantalla);
         fondo1.actualizar(jugador);
         mensaje1.actualizar(jugador);
+        tierra.actualizar(jugador);
+        suelo.actualizar(jugador);
+        suelo2.actualizar(jugador);
+        obstaculo1.actualizar(jugador);
+        
     }
     
     /**

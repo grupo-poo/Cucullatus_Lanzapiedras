@@ -2,6 +2,7 @@ package Personajes;
 
 import Control.Teclado;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
@@ -24,7 +25,7 @@ public class Jugador {
         alto = imagen.getHeight();
         
         // Posiciones por defecto
-        x = 40;     y = 590;
+        x = 40;     y = 550;
         
         desplazamiento = x;
         
@@ -61,7 +62,7 @@ public class Jugador {
              * superardo la distancia critica pero aún estemos en su borde
              * habilitamos únicamente el movimiento hacia la izquierda.
              */
-            if (desplazamiento < (distCrit + pasos) && Teclado.IZQUIERDA) {
+            if (desplazamiento < (distCrit + pasos) && Teclado.isIZQUIERDA()) {
                 
                 distanciaCritica = false;
             ////
@@ -79,28 +80,32 @@ public class Jugador {
         // El jugador se moverá mientras no haya superado la distancia critica.
         
         if (!distanciaCritica) {
-            if (Teclado.IZQUIERDA) {
+            if (Teclado.isIZQUIERDA()) {
                 x -= pasos;
                 desplazamiento -= pasos;
-            }else if (Teclado.DERECHA) {
+            }else if (Teclado.isDERECHA()) {
                 x += pasos;
                 desplazamiento += pasos;
-            }if (Teclado.ARRIBA) {
+            }if (Teclado.isARRIBA()) {
                 y -= pasos;
-            }if (Teclado.ABAJO) {
+            }if (Teclado.isABAJO()) {
                 y += pasos;
             }
         } else {
-            if (Teclado.IZQUIERDA) {
+            if (Teclado.isIZQUIERDA()) {
                 desplazamiento -= pasos;
-            }else if (Teclado.DERECHA) {
+            }else if (Teclado.isDERECHA()) {
                 desplazamiento += pasos;
-            }if (Teclado.ARRIBA) {
+            }if (Teclado.isARRIBA()) {
                 y -= pasos;
-            }if (Teclado.ABAJO) {
+            }if (Teclado.isABAJO()) {
                 y += pasos;
             }
         }
+    }
+    
+    public Rectangle getRectangulo() {
+        return new Rectangle(x, y, ancho, alto);
     }
 
     public BufferedImage getImagen() {

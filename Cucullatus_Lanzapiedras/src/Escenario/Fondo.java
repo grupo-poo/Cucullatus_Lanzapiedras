@@ -29,9 +29,9 @@ public class Fondo {
     
     public void actualizar(Jugador jugador) {
         if (jugador.isDistanciaCritica()) {
-            if (Teclado.IZQUIERDA) {
+            if (Teclado.isIZQUIERDA()) {
                 x += avance;
-            }else if (Teclado.DERECHA) {
+            }else if (Teclado.isDERECHA()) {
                 x -= avance;
             }
         }

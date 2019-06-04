@@ -9,10 +9,10 @@ import java.awt.event.KeyListener;
  */
 public class Teclado implements KeyListener{
     
-    public static boolean ARRIBA;
-    public static boolean ABAJO;
-    public static boolean DERECHA;
-    public static boolean IZQUIERDA;
+    private static boolean ARRIBA;
+    private static boolean ABAJO;
+    private static boolean DERECHA;
+    private static boolean IZQUIERDA;
     
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -46,5 +46,36 @@ public class Teclado implements KeyListener{
             IZQUIERDA = false;
         }
     }
-    
+
+    public static boolean isARRIBA() {
+        return ARRIBA;
+    }
+
+    public static void setARRIBA(boolean ARRIBA) {
+        Teclado.ARRIBA = ARRIBA;
+    }
+
+    public static boolean isABAJO() {
+        return ABAJO;
+    }
+
+    public static void setABAJO(boolean ABAJO) {
+        Teclado.ABAJO = ABAJO;
+    }
+
+    public static boolean isDERECHA() {
+        return DERECHA;
+    }
+
+    public static void setDERECHA(boolean DERECHA) {
+        Teclado.DERECHA = DERECHA;
+    }
+
+    public static boolean isIZQUIERDA() {
+        return IZQUIERDA;
+    }
+
+    public static void setIZQUIERDA(boolean IZQUIERDA) {
+        Teclado.IZQUIERDA = IZQUIERDA;
+    }
 }
