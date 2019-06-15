@@ -2,8 +2,8 @@ package Escenario;
 
 import Control.Teclado;
 import Personajes.Jugador;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 
 /**
  * @author Milton Lenis
@@ -12,19 +12,19 @@ public class Mensaje {
     
     private int ancho, alto, x, y;
     private byte avance;
-    private BufferedImage imagen;
+    private Image imagen;
     
-    public Mensaje(BufferedImage imagen, byte avance) {
+    public Mensaje(Image imagen, byte avance) {
         this.imagen = imagen;
         this.avance = avance; // Número de pixeles que se mueven con cada paso
         
         // Por defecto el mensaje tiene las dimensiones de la imagen original.
-        ancho = imagen.getWidth();
-        alto = imagen.getHeight();
+        ancho = (int) imagen.getWidth();
+        alto = (int) imagen.getHeight();
     }
     
-    public void dibujar(Graphics g) {
-        g.drawImage(imagen, x, y, ancho, alto, null);
+    public void dibujar(GraphicsContext lapiz) {
+        lapiz.drawImage(imagen, x, y, ancho, alto);
     }
     
     public void actualizar(Jugador jugador) {
@@ -37,11 +37,11 @@ public class Mensaje {
         }
     }
     
-    public BufferedImage getImagen() {
+    public Image getImagen() {
         return imagen;
     }
     
-    public void setImagen(BufferedImage imagen) {
+    public void setImagen(Image imagen) {
         this.imagen = imagen;
     }
 

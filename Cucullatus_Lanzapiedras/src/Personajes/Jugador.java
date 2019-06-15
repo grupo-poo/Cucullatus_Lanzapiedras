@@ -1,9 +1,9 @@
 package Personajes;
 
 import Control.Teclado;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 
 /**
  * @author Milton Lenis
@@ -15,14 +15,14 @@ public class Jugador {
     private int x, y;   // Posiciones.
     private int desplazamiento;
     private boolean distanciaCritica; // está en este punto de no avance ¿?
-    private BufferedImage imagen;
+    private Image imagen;
     
-    public Jugador(BufferedImage imagen) {
+    public Jugador(Image imagen) {
         this.imagen = imagen;
         
         // Por defecto el jugador tiene las dimensiones de la imagen original.
-        ancho = imagen.getWidth();
-        alto = imagen.getHeight();
+        ancho = (int) imagen.getWidth();
+        alto  = (int) imagen.getHeight();
         
         // Posiciones por defecto
         x = 40;     y = 550;
@@ -33,8 +33,8 @@ public class Jugador {
         pasos = 3;
     }
     
-    public void dibujar(Graphics g) {
-        g.drawImage(imagen, x, y, ancho, alto, null);
+    public void dibujar(GraphicsContext lapiz) {
+        lapiz.drawImage(imagen, x, y, ancho, alto);
         
         /* Esto de aquí sirve para depurar comentando lo de arriba y
            dejando lo de abajo
@@ -108,11 +108,11 @@ public class Jugador {
         return new Rectangle(x, y, ancho, alto);
     }
 
-    public BufferedImage getImagen() {
+    public Image getImagen() {
         return imagen;
     }
-    
-    public void setImagen(BufferedImage imagen) {
+
+    public void setImagen(Image imagen) {
         this.imagen = imagen;
     }
 

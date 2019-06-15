@@ -1,48 +1,40 @@
 package Control;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import javafx.scene.input.KeyCode;
 
 /**
  * @author diegocarvajal
  * @author Milton Lenis
  */
-public class Teclado implements KeyListener{
+public class Teclado {
     
     private static boolean ARRIBA;
     private static boolean ABAJO;
     private static boolean DERECHA;
     private static boolean IZQUIERDA;
-    
-    @Override
-    public void keyTyped(KeyEvent e) {}
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int codTecla = e.getKeyCode();
+    public static void keyPressed(KeyCode tecla) {
         
-        if (codTecla == KeyEvent.VK_UP) {
+        if (tecla == KeyCode.UP) {
             ARRIBA = true;
-        }else if (codTecla == KeyEvent.VK_DOWN) {
+        }else if (tecla == KeyCode.DOWN) {
             ABAJO = true;
-        }else if (codTecla == KeyEvent.VK_RIGHT) {
+        }else if (tecla == KeyCode.RIGHT) {
             DERECHA = true;
-        }else if (codTecla == KeyEvent.VK_LEFT) {
+        }else if (tecla == KeyCode.LEFT) {
             IZQUIERDA = true;
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-        int codTecla = e.getKeyCode();
+    public static void keyReleased(KeyCode tecla) {
      
-        if (codTecla == KeyEvent.VK_UP) {
+        if (tecla == KeyCode.UP) {
             ARRIBA = false;
-        }else if (codTecla == KeyEvent.VK_DOWN) {
+        }else if (tecla == KeyCode.DOWN) {
             ABAJO = false;
-        }else if (codTecla == KeyEvent.VK_RIGHT) {
+        }else if (tecla == KeyCode.RIGHT) {
             DERECHA = false;
-        }else if (codTecla == KeyEvent.VK_LEFT) {
+        }else if (tecla == KeyCode.LEFT) {
             IZQUIERDA = false;
         }
     }

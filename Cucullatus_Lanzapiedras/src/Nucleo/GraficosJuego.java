@@ -4,12 +4,11 @@ import Escenario.Fondo;
 import Escenario.Mensaje;
 import Escenario.Obstaculo;
 import Personajes.Jugador;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import javax.imageio.ImageIO;
-import javax.swing.JPanel;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 
 
 /**
@@ -17,8 +16,8 @@ import javax.swing.JPanel;
  * @author Milton Lenis
  * @author diegocarvajal
  */
-public class PanelJuego extends JPanel  {
-    
+public class GraficosJuego extends Canvas {
+    GraphicsContext lapiz;
     private Jugador jugador;
     private Fondo fondo1;
     private Mensaje mensaje1;
@@ -31,10 +30,12 @@ public class PanelJuego extends JPanel  {
     private final int anchoPantalla;
     
     private boolean ejecutandose;
-    
-    public PanelJuego(int altoPantalla, int anchoPantalla) throws Exception {
-        this.altoPantalla = altoPantalla;
-        this.anchoPantalla = anchoPantalla;
+
+    public GraficosJuego( double anchoPantalla, double altoPantalla) throws IOException {
+        super(anchoPantalla, altoPantalla);
+        lapiz = this.getGraphicsContext2D();
+        this.altoPantalla = (int) altoPantalla;
+        this.anchoPantalla = (int) anchoPantalla;
         inicializar();
     }
     
@@ -51,32 +52,32 @@ public class PanelJuego extends JPanel  {
     }
     
     private void cargarJugador() throws IOException {
-        // Se cargan la imagen del jugador
-        URL url = this.getClass().getResource("Sprites/Cucullatus.png");
-        BufferedImage imagen = ImageIO.read(url);
+        // Se cargan la imagen del jugador        
+        File url = new File("src/Recursos/Cucullatus.png");
+        Image imagen = new Image(url.toURI().toString());
         jugador = new Jugador(imagen);
     }
     
     private void cargarEscenario() throws IOException {
         // Se cargan la imagen del fondo
-        URL url = this.getClass().getResource("Fondos/fondo.png");
-        BufferedImage imagen = ImageIO.read(url);
+        File url = new File("src/Recursos//fondo.png");
+        Image imagen = new Image(url.toURI().toString());
 
         // Se crea el fondo y se le añade la imagen
         fondo1 = new Fondo(imagen, jugador.getPasos());
         fondo1.setAlto(altoPantalla);
         
         // Se preparan los elementos del escenario
-        url = this.getClass().getResource("Fondos/Mensaje.png");
-        imagen = ImageIO.read(url);
+        url = new File("src/Recursos/Mensaje.png");
+        imagen = new Image(url.toURI().toString());
         mensaje1 = new Mensaje(imagen, jugador.getPasos());
         mensaje1.setX(100);     
         mensaje1.setY(400);
         mensaje1.setAncho(300); 
         mensaje1.setAlto(150);
         
-        url = this.getClass().getResource("Fondos/Madera.png");
-        imagen = ImageIO.read(url);
+        url = new File("src/Recursos/Madera.png");
+        imagen = new Image(url.toURI().toString());
         tierra = new Obstaculo(imagen, jugador.getPasos());
         tierra.setX(502);               
         tierra.setY(402);
@@ -107,18 +108,17 @@ public class PanelJuego extends JPanel  {
         
     }
     
-    private void dibujar(Graphics g) {
-        fondo1.dibujar(g);
-        mensaje1.dibujar(g);
-        tierra.dibujar(g);
-        suelo.dibujar(g);
-        suelo2.dibujar(g);
-        obstaculo1.dibujar(g);
-        jugador.dibujar(g);
+    private void dibujar() {
+        fondo1.dibujar(lapiz);
+        mensaje1.dibujar(lapiz);
+        tierra.dibujar(lapiz);
+        suelo.dibujar(lapiz);
+        suelo2.dibujar(lapiz);
+        obstaculo1.dibujar(lapiz);
+        jugador.dibujar(lapiz);
     }
     
     private void actualizar(){
-        
         jugador.actualizar(anchoPantalla);
         fondo1.actualizar(jugador);
         mensaje1.actualizar(jugador);
@@ -129,14 +129,9 @@ public class PanelJuego extends JPanel  {
         
     }
     
-    /**
-     * Este metodo heredado de JPanel se ejecuta sin necesidad de llamarlo.
-     * Sobre él ponemos todo lo que se mostrará en pantalla.
-     */
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        dibujar(g);
+    public void repintar() {
+        lapiz.clearRect(0, 0, anchoPantalla, altoPantalla);
+        dibujar();
         actualizar();
     }
 
