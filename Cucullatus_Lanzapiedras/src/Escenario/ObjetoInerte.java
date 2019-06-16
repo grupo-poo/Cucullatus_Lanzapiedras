@@ -1,24 +1,21 @@
 package Escenario;
 
-import Control.Teclado;
 import Personajes.Jugador;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 
 /**
  * @author Milton Lenis
  */
-public class Mensaje {
+public class ObjetoInerte {
     
-    private int ancho, alto, x, y;
-    private byte avance;
+    private int ancho, alto, x, y, xInit;
     private Image imagen;
     
-    public Mensaje(Image imagen, byte avance) {
+    public ObjetoInerte(Image imagen) {
         this.imagen = imagen;
-        this.avance = avance; // Número de pixeles que se mueven con cada paso
-        
-        // Por defecto el mensaje tiene las dimensiones de la imagen original.
+        // Por defecto el fondo tiene las dimensiones de la imagen original.
         ancho = (int) imagen.getWidth();
         alto = (int) imagen.getHeight();
     }
@@ -29,20 +26,12 @@ public class Mensaje {
     
     public void actualizar(Jugador jugador) {
         if (jugador.isDistanciaCritica()) {
-            if (Teclado.isIZQUIERDA()) {
-                x += avance;
-            }else if (Teclado.isDERECHA()) {
-                x -= avance;
-            }
+            x -= jugador.getVelocidad();
         }
     }
     
-    public Image getImagen() {
-        return imagen;
-    }
-    
-    public void setImagen(Image imagen) {
-        this.imagen = imagen;
+    public Rectangle getRectangulo() {
+        return new Rectangle(x, y, ancho, alto);
     }
 
     public int getAncho() {
@@ -67,6 +56,7 @@ public class Mensaje {
 
     public void setX(int x) {
         this.x = x;
+        this.xInit = x;
     }
 
     public int getY() {
@@ -76,5 +66,23 @@ public class Mensaje {
     public void setY(int y) {
         this.y = y;
     }
+
+    public int getxInit() {
+        return xInit;
+    }
+
+    public void setxInit(int xInit) {
+        this.xInit = xInit;
+    }
+
+    public Image getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(Image imagen) {
+        this.imagen = imagen;
+    }
+    
+    
     
 }

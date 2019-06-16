@@ -39,6 +39,7 @@ public class Principal extends Application {
         escena.setOnKeyPressed(tecla -> Teclado.keyPressed(tecla.getCode()));
         escena.setOnKeyReleased(tecla -> Teclado.keyReleased(tecla.getCode()));
         //ventana.initStyle(StageStyle.UNDECORATED); Esconder barra ( - [] X ).
+        ventana.setFullScreen(true);
         ventana.setScene(escena);
         ventana.show();
         
@@ -52,7 +53,7 @@ public class Principal extends Application {
     }
     
     public void getDimPantalla() {
-        Rectangle2D dim = Screen.getPrimary().getVisualBounds();
+        Rectangle2D dim = Screen.getPrimary().getBounds();
         anchoPantalla = (int) dim.getWidth();
         altoPantalla = (int) dim.getHeight();
     }
