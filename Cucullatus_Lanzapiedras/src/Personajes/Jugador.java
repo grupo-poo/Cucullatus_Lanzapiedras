@@ -62,13 +62,16 @@ public class Jugador {
         Ju.setX(x - pasos);
         for (ObjetoInerte obs : obstaculos) {
             if (Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
-                Ju.setX(x + 2*pasos);
-                if (!Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
-                    hayInterseccion = true;
-                    desplazamiento = obs.getxInit() + obs.getAncho();
-                    if (!distanciaCritica) { x = desplazamiento; }
+                if (!(esqInfDer_esqSupIzq(obs.getRectangulo(), Ju)
+                        || esqSupDer_esqInfIzq(obs.getRectangulo(), Ju))) {
+                    Ju.setX(x + 1);
+                    if (!Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
+                        hayInterseccion = true;
+                        desplazamiento = obs.getxInit() + obs.getAncho();
+                        if (!distanciaCritica) { x = desplazamiento; }
+                    }
+                    Ju.setX(x - 1);
                 }
-                Ju.setX(x - 2*pasos);
             } 
         }
         if (!hayInterseccion) {
@@ -80,20 +83,23 @@ public class Jugador {
             }
         }
     }
-    
+        
     private void desplazarseDerecha(ArrayList<ObjetoInerte> obstaculos) {
         boolean hayInterseccion = false;
         Rectangle Ju = getRectangulo();
         Ju.setX(x + pasos);
         for (ObjetoInerte obs : obstaculos) {
             if (Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
-                Ju.setX(x - 2*pasos);
-                if (!Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
-                    hayInterseccion = true;
-                    desplazamiento = obs.getxInit() - ancho;
-                    if (!distanciaCritica) { x = desplazamiento; }
+                if (!(esqSupDer_esqInfIzq(Ju, obs.getRectangulo()) 
+                        || esqInfDer_esqSupIzq(Ju, obs.getRectangulo()))) {
+                    Ju.setX(x - 1);
+                    if (!Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
+                        hayInterseccion = true;
+                        desplazamiento = obs.getxInit() - ancho;
+                        if (!distanciaCritica) { x = desplazamiento; }
+                    }
+                    Ju.setX(x + 1);
                 }
-                Ju.setX(x + 2*pasos);
             }
         }
         if (!hayInterseccion) {
@@ -112,12 +118,15 @@ public class Jugador {
         Ju.setY(y - pasos);
         for (ObjetoInerte obs : obstaculos) {
             if (Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
-                Ju.setY(y + 2*pasos);
-                if (!Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
-                    hayInterseccion = true;
-                    y = obs.getY() + obs.getAlto();
+                if (!(esqSupDer_esqInfIzq(Ju, obs.getRectangulo())
+                        || esqInfDer_esqSupIzq(obs.getRectangulo(), Ju))) {
+                    Ju.setY(y + 1);
+                    if (!Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
+                        hayInterseccion = true;
+                        y = obs.getY() + obs.getAlto();
+                    }
+                    Ju.setY(y - 1);
                 }
-                Ju.setY(y - 2*pasos);
             }
         }
         if (!hayInterseccion) { y -= pasos; }
@@ -129,12 +138,15 @@ public class Jugador {
         Ju.setY(y + pasos);
         for (ObjetoInerte obs : obstaculos) {
             if (Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
-                Ju.setY(y - 2*pasos);
-                if (!Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
-                    hayInterseccion = true;
-                    y = obs.getY() - alto;
+                if (!(esqInfDer_esqSupIzq(Ju, obs.getRectangulo())
+                        || esqSupDer_esqInfIzq(obs.getRectangulo(), Ju))) {
+                    Ju.setY(y - 1);
+                    if (!Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
+                        hayInterseccion = true;
+                        y = obs.getY() - alto;
+                    }
+                    Ju.setY(y + 1);
                 }
-                Ju.setY(y + 2*pasos);
             }
         }
         if (!hayInterseccion) { y += pasos; }
@@ -146,6 +158,36 @@ public class Jugador {
             distanciaCritica = !(desplazamiento < (distCrit + pasos) 
                                                 && Teclado.isIZQUIERDA());
         } else distanciaCritica = false;
+    }
+    
+    private boolean esqSupDer_esqInfIzq(Rectangle rect1, Rectangle rect2) {
+        short rect1MinY = (short) rect1.getBoundsInLocal().getMinY();
+        short rect2MaxY = (short) rect2.getBoundsInLocal().getMaxY();
+        short rect1MaxX = (short) rect1.getBoundsInLocal().getMaxX();
+        short rect2MinX = (short) rect2.getBoundsInLocal().getMinX();
+        boolean bool = false;
+        if (rect1MinY == rect2MaxY) {
+            bool = (rect1MaxX - rect2MinX) <= pasos;
+        } else 
+        if (rect1MaxX == rect2MinX) {
+            bool = (rect2MaxY - rect1MinY) <= pasos;
+        }
+        return bool;
+    }
+    
+    private boolean esqInfDer_esqSupIzq(Rectangle rect1, Rectangle rect2) {
+        short rect1MaxY = (short) rect1.getBoundsInLocal().getMaxY();
+        short rect2MinY = (short) rect2.getBoundsInLocal().getMinY();
+        short rect1MaxX = (short) rect1.getBoundsInLocal().getMaxX();
+        short rect2MinX = (short) rect2.getBoundsInLocal().getMinX();
+        boolean bool = false;
+        if (rect1MaxY == rect2MinY) {
+            bool = (rect1MaxX - rect2MinX) <= pasos;
+        } else 
+        if (rect1MaxX == rect2MinX) {
+            bool = (rect1MaxY - rect2MinY) <= pasos;
+        }
+        return bool;
     }
     
     public Rectangle getRectangulo() {
