@@ -10,14 +10,33 @@ import javafx.scene.shape.Rectangle;
  */
 public class ObjetoInerte {
     
-    private int ancho, alto, x, y, xInit;
+    private int ancho, alto; // Dimensiones de la imagen del objeto.
+    private int x, y; // Coordenadas del Objeto en la pantalla.
+    private int xInit; // Coordemada x inicial (no cambia)
     private Image imagen;
     
     public ObjetoInerte(Image imagen) {
         this.imagen = imagen;
-        // Por defecto el fondo tiene las dimensiones de la imagen original.
         ancho = (int) imagen.getWidth();
         alto = (int) imagen.getHeight();
+    }
+    
+    public ObjetoInerte(Image imagen, int x, int y) {
+        this.imagen = imagen;
+        ancho = (int) imagen.getWidth();
+        alto = (int) imagen.getHeight();
+        this.x = x;
+        this.xInit = x;
+        this.y = y;
+    }
+    
+    public ObjetoInerte(Image imagen, int x, int y, int ancho, int alto) {
+        this.imagen = imagen;
+        this.x = x;
+        this.xInit = x;
+        this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
     }
     
     public void dibujar(GraphicsContext lapiz) {
@@ -32,6 +51,17 @@ public class ObjetoInerte {
     
     public Rectangle getRectangulo() {
         return new Rectangle(x, y, ancho, alto);
+    }
+    
+    public void setCoordenadas(int x, int y) {
+        this.x = x;
+        this.xInit = x;
+        this.y = y;
+    }
+    
+    public void setDimensiones(int ancho, int alto) {
+        this.ancho = ancho;
+        this.alto = alto;
     }
 
     public int getAncho() {
@@ -69,10 +99,6 @@ public class ObjetoInerte {
 
     public int getxInit() {
         return xInit;
-    }
-
-    public void setxInit(int xInit) {
-        this.xInit = xInit;
     }
 
     public Image getImagen() {
