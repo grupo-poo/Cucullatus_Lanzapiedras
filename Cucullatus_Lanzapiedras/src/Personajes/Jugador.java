@@ -22,6 +22,9 @@ public class Jugador {
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
     private Image imagen;
     
+    private int secuencia=1;
+    private int cuenta=0;
+    
     public Jugador(Image imagen) {
         this.imagen = imagen;
         ancho = (int) imagen.getWidth();
@@ -33,6 +36,21 @@ public class Jugador {
     
     public void dibujar(GraphicsContext lapiz) {
         lapiz.drawImage(imagen, x, y, ancho, alto);
+        
+        if (Teclado.isIZQUIERDA()) {
+           if(cuenta<=10){
+            this.imagen = 
+                new Image("Correr/"+this.secuencia+".png");
+            if(this.cuenta==10) {
+                cuenta = 0;
+                   
+                 if(this.secuencia==7) secuencia = 1;
+                 else secuencia++; 
+    
+             }
+            else cuenta++;
+        }
+        }
     }
     
     public void actualizar(int anchoDePantalla, ArrayList<ObjetoInerte> obstaculos) {
