@@ -22,8 +22,8 @@ public class Jugador {
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
     private Image imagen;
     
-    private int secuencia=1;
-    private int cuenta=0;
+    private int secuencia=1;//Numero de imagenes, empieza por 1
+    private int cuenta=0;//Ayuda a controlar la cantidad de veces que se pintan las imágenes
     
     public Jugador(Image imagen) {
         this.imagen = imagen;
