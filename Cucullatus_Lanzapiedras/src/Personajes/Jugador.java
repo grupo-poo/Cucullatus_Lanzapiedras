@@ -6,7 +6,6 @@ import Nucleo.Debug;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -22,8 +21,8 @@ public class Jugador {
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
     private Image imagen;
     
-    private int secuencia=1;//Numero de imagenes, empieza por 1
-    private int cuenta=0;//Ayuda a controlar la cantidad de veces que se pintan las imágenes
+    private int secuencia = 1;//Numero de imagenes, empieza por 1
+    private int cuenta = 0;//Ayuda a controlar la cantidad de veces que se pintan las imágenes
     
     public Jugador(Image imagen) {
         this.imagen = imagen;
@@ -36,27 +35,13 @@ public class Jugador {
     
     public void dibujar(GraphicsContext lapiz) {
         lapiz.drawImage(imagen, x, y, ancho, alto);
-        
-        if (Teclado.isIZQUIERDA()) {
-           if(cuenta<=10){
-            this.imagen = 
-                new Image("Correr/"+this.secuencia+".png");
-            if(this.cuenta==10) {
-                cuenta = 0;
-                   
-                 if(this.secuencia==7) secuencia = 1;
-                 else secuencia++; 
-    
-             }
-            else cuenta++;
-        }
-        }
     }
     
     public void actualizar(int anchoDePantalla, ArrayList<ObjetoInerte> obstaculos) {
         // Cuando el jugador esté en un cierto punto el escenario se mueve.
         movimientoDeEscenario(anchoDePantalla);
         mover(obstaculos); // Aquí movemos al jugador.
+        animacion();
     }
     
     private void mover(ArrayList<ObjetoInerte> obstaculos) {
@@ -181,6 +166,34 @@ public class Jugador {
     private boolean ObstaculoDirVertical(Rectangle Jugador, Rectangle obstaculo) {
         return !(Jugador.getBoundsInLocal().getMaxX() == obstaculo.getBoundsInLocal().getMinX()
                 || Jugador.getBoundsInLocal().getMinX() == obstaculo.getBoundsInLocal().getMaxX());
+    }
+    
+    private void animacion() {
+        boolean moviemiento = false; // si se está moviendo esto será true
+        this.imagen = new Image("Correr/"+this.secuencia+".png");
+        if (velocidad < 0) {
+            moviemiento = true;
+            if (this.ancho < 0) { 
+//                this.x += ancho; // la solucion está en cabiar la x
+                this.ancho *= -1; 
+            }
+        } else if (velocidad > 0) {
+            moviemiento = true;
+            if (this.ancho > 0) { 
+//                this.x -= ancho; // la solucion está en cabiar la x
+                this.ancho *= -1;
+            }
+        }
+        if (moviemiento) {
+            if(cuenta<=10){
+                if(this.cuenta == 10) {
+                    cuenta = 0;
+                    if(this.secuencia == 7) secuencia = 1;
+                    else secuencia++; 
+                 }
+                else cuenta++;
+            }
+        }
     }
     
     public Rectangle getRectangulo() {

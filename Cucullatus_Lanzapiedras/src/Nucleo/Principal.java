@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * @author Nicolas Hoyos
@@ -38,8 +39,8 @@ public class Principal extends Application {
         escena = new Scene(panel);
         escena.setOnKeyPressed(tecla -> Teclado.keyPressed(tecla.getCode()));
         escena.setOnKeyReleased(tecla -> Teclado.keyReleased(tecla.getCode()));
-        //ventana.initStyle(StageStyle.UNDECORATED); Esconder barra ( - [] X ).
-        ventana.setFullScreen(true);
+        ventana.initStyle(StageStyle.UNDECORATED); // Esconder barra ( - [] X ).
+        ventana.setMaximized(true);
         ventana.setScene(escena);
         ventana.show();
         
