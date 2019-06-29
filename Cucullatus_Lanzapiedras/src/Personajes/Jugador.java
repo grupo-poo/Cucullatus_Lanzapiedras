@@ -188,6 +188,7 @@ public class Jugador {
         
         
         if ((!movimientoI  && movimientoD || !movimientoD && movimientoI)) { //Operador lógico "XOR"
+            
             if(cuenta<=10){
                 if(this.cuenta == 10) {
                     cuenta = 0;
