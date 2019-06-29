@@ -22,7 +22,9 @@ public class Jugador {
     private Image imagen;
     
     private int secuencia = 1;//Numero de imagenes, empieza por 1
-    private int cuenta = 0;//Ayuda a controlar la cantidad de veces que se pintan las imágenes
+   
+    private int cuenta= 0;//Ayuda a controlar la cantidad de veces que se pintan las imágenes
+  
     
     public Jugador(Image imagen) {
         this.imagen = imagen;
@@ -169,22 +171,23 @@ public class Jugador {
     }
     
     private void animacion() {
-        boolean moviemiento = false; // si se está moviendo esto será true
-        this.imagen = new Image("Correr/"+this.secuencia+".png");
+        boolean movimientoI = false; // si se está moviendo esto será true
+        boolean movimientoD = false;
+        
         if (velocidad < 0) {
-            moviemiento = true;
-            if (this.ancho < 0) { 
-//                this.x += ancho; // la solucion está en cabiar la x
-                this.ancho *= -1; 
-            }
-        } else if (velocidad > 0) {
-            moviemiento = true;
-            if (this.ancho > 0) { 
-//                this.x -= ancho; // la solucion está en cabiar la x
-                this.ancho *= -1;
-            }
-        }
-        if (moviemiento) {
+            this.imagen = new Image("CorrerI/"+this.secuencia+".png");
+            movimientoI = true;
+            
+        } 
+        
+        if (velocidad > 0) {
+            
+            movimientoD = true;
+            this.imagen = new Image("CorrerD/"+this.secuencia+".png");
+        } 
+        
+        
+        if ((!movimientoI  && movimientoD || !movimientoD && movimientoI)) { //Operador lógico "XOR"
             if(cuenta<=10){
                 if(this.cuenta == 10) {
                     cuenta = 0;
@@ -193,7 +196,12 @@ public class Jugador {
                  }
                 else cuenta++;
             }
-        }
+            
+            
+            }
+        
+        
+    
     }
     
     public Rectangle getRectangulo() {
