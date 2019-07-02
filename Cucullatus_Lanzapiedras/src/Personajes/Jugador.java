@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
 /**
- * @author Milton Lenis
+ * Todas las mecanicas del Jugador se establecen aquí.
  */
 public class Jugador {
     
@@ -35,37 +35,41 @@ public class Jugador {
         pasos = 3;
     }
     
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     * 
+     * Este metodo dibuja al jugador.
+     * 
+     * Se le pueden añadir nuevos metodos si así se requiere o cualquier
+     * otra alteración de su estructura.
+     * 
+     * @param lapiz Objeto de graficos
+     */
     public void dibujar(GraphicsContext lapiz) {
         lapiz.drawImage(imagen, x, y, ancho, alto);
     }
     
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     * 
+     * Este metodo cambia los atributos que los metodos
+     * que contiene cambian por cada frame.
+     * 
+     * Se le pueden añadir nuevos metodos si así se requiere o cualquier
+     * otra alteración de su estructura.
+     * 
+     * @param anchoDePantalla
+     * @param obstaculos 
+     */
     public void actualizar(int anchoDePantalla, ArrayList<ObjetoInerte> obstaculos) {
         // Cuando el jugador esté en un cierto punto el escenario se mueve.
-        movimientoDeEscenario(anchoDePantalla);
+        determinarDistanciaCritica(anchoDePantalla);
         mover(obstaculos); // Aquí movemos al jugador.
-        animacion();
-    }
-    
-    private void mover(ArrayList<ObjetoInerte> obstaculos) {
-        velocidad = desplazamiento;
-        if (Teclado.isIZQUIERDA()) {
-            desplazarseIzquierda(obstaculos);
-        }
-        if (Teclado.isDERECHA()) {
-            desplazarseDerecha(obstaculos);
-        }
-        if (Teclado.isARRIBA()) {
-            desplazarseArriba(obstaculos);
-        }
-        if (Teclado.isABAJO()) {
-            desplazarseAbajo(obstaculos);
-        }
-        velocidad = desplazamiento - velocidad;
+        animacion(); // Aquí se ejecuta la animación del jugador.
         
         //////////////////////////////////////////
         /**
-         * Todo lo que va desde la linea 60 a 70 puede ser
-         * eliminado, solo sirve para depurar.
+         * Todo esto puede ser eliminado, solo sirve para depurar.
          */
         Debug.lapiz.fillText("Desplazamiento: " + desplazamiento, 20, 30);
         Debug.lapiz.fillText("Posición x: " + x, 20, 42);
@@ -75,20 +79,70 @@ public class Jugador {
         //////////////////////////////////////////
     }
     
-    private void desplazarseIzquierda(ArrayList<ObjetoInerte> obstaculos) {
-        boolean obstaculoEnfrente = false;
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - x
+     * - y
+     * - desplazamiento
+     * - velocidad
+     * 
+     * Contiene la instrucciones que permiten mover
+     * al jugador por el escenario.
+     * 
+     * Se le pueden añadir nuevos metodos si así se requiere o cualquier
+     * otra alteración de su estructura.
+     * 
+     * @param obstaculos array de obstaculos.
+     */
+    private void mover(ArrayList<ObjetoInerte> obstaculos) {
+        velocidad = desplazamiento;
+        
+        desplazarseAbajo(obstaculos, 3); // Gravedad sin aceleración XD
+        
+        if (Teclado.isIZQUIERDA()) {
+            desplazarseIzquierda(obstaculos);
+        }
+        if (Teclado.isDERECHA()) {
+            desplazarseDerecha(obstaculos);
+        }
+        if (Teclado.isARRIBA()) {
+            desplazarseArriba(obstaculos, 4); // 1+ que la gravedad.
+        }
+        velocidad = desplazamiento - velocidad;
+    }
+    
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - x
+     * - desplazamiento
+     * 
+     * Permite que el jugador se mueva a la izquierda siempre y cuando
+     * no haya un obstaculo en esa dirección.
+     * 
+     * No se puede invocar este metodo más de una vez en ningún otro metodo.
+     * 
+     * @param obstaculos array de obstaculos.
+     * @return Devuelve false si se intersepta un obstaculo.
+     * @author Milton Lenis
+     */
+    private boolean desplazarseIzquierda(ArrayList<ObjetoInerte> obstaculos) {
+        boolean viaLibre = true;
         Rectangle Ju = getRectangulo();
         Ju.setX(x - pasos);
         for (ObjetoInerte obs : obstaculos) {
             if (Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
                 if (ObstaculoDirHorizontal(Ju, obs.getRectangulo())) {
-                    obstaculoEnfrente = true;
+                    viaLibre = false;
                     desplazamiento = obs.getxInit() + obs.getAncho();
                     if (!distanciaCritica) { x = desplazamiento; }
                 }
             } 
         }
-        if (!obstaculoEnfrente) {
+        if (viaLibre) {
             if ((desplazamiento - x) % pasos != 0) {
                 while ((desplazamiento - x) % pasos != 0) { desplazamiento--; }
             } else {
@@ -96,22 +150,39 @@ public class Jugador {
                 if (!distanciaCritica) { x = desplazamiento; }
             }
         }
+        return viaLibre;
     }
-        
-    private void desplazarseDerecha(ArrayList<ObjetoInerte> obstaculos) {
-        boolean obstaculoEnfrente = false;
+    
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - x
+     * - desplazamiento
+     * 
+     * Permite que el jugador se mueva a la derecha siempre y cuando
+     * no haya un obstaculo en esa dirección.
+     * 
+     * No se puede invocar este metodo más de una vez en ningún otro metodo.
+     * 
+     * @param obstaculos array de obstaculos.
+     * @return Devuelve false si se intersepta un obstaculo.
+     * @author Milton Lenis
+     */
+    private boolean desplazarseDerecha(ArrayList<ObjetoInerte> obstaculos) {
+        boolean viaLibre = true;
         Rectangle Ju = getRectangulo();
         Ju.setX(x + pasos);
         for (ObjetoInerte obs : obstaculos) {
             if (Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
                 if (ObstaculoDirHorizontal(Ju, obs.getRectangulo())) {
-                    obstaculoEnfrente = true;
+                    viaLibre = false;
                     desplazamiento = obs.getxInit() - ancho;
                     if (!distanciaCritica) { x = desplazamiento; }
                 }
             }
         }
-        if (!obstaculoEnfrente) {
+        if (viaLibre) {
             if ((desplazamiento - x) % pasos != 0) {
                 while ((desplazamiento - x) % pasos != 0) { desplazamiento++; }
             } else { 
@@ -119,57 +190,121 @@ public class Jugador {
                 if (!distanciaCritica) { x = desplazamiento; } 
             }
         }
+        return viaLibre;
     }
     
-    private void desplazarseArriba(ArrayList<ObjetoInerte> obstaculos) {
-        boolean obstaculoEnfrente = false;
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - y
+     * 
+     * Permite que el jugador se mueva hacia arriba siempre y cuando
+     * no haya un obstaculo en esa dirección.
+     * 
+     * No se puede invocar este metodo más de una vez en ningún otro metodo.
+     * 
+     * @param obstaculos array de obstaculos.
+     * @param velocidad velocidad a la que se moverá el jugador.
+     * @return Devuelve false si se intersepta un obstaculo.
+     * @author Milton Lenis
+     */
+    private boolean desplazarseArriba(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+        boolean viaLibre = true;
         Rectangle Ju = getRectangulo();
-        Ju.setY(y - pasos);
+        Ju.setY(y - (pasos * velocidad));
         for (ObjetoInerte obs : obstaculos) {
             if (Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
                 if (ObstaculoDirVertical(Ju, obs.getRectangulo())) {
-                    obstaculoEnfrente = true;
+                    viaLibre = false;
                     y = obs.getY() + obs.getAlto();
                 }
             }
         }
-        if (!obstaculoEnfrente) { y -= pasos; }
+        if (viaLibre) { y -= (pasos * velocidad); }
+        return viaLibre;
     }
     
-    private void desplazarseAbajo(ArrayList<ObjetoInerte> obstaculos) {
-        boolean obstaculoEnfrente = false;
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - y
+     * 
+     * Permite que el jugador se mueva hacia abajo siempre y cuando
+     * no haya un obstaculo en esa dirección.
+     * 
+     * No se puede invocar este metodo más de una vez en ningún otro metodo.
+     * 
+     * @param obstaculos array de obstaculos.
+     * @param velocidad velocidad a la que se moverá el jugador.
+     * @return Devuelve false si se intersepta un obstaculo.
+     * @author Milton Lenis
+     */
+    private boolean desplazarseAbajo(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+        boolean viaLibre = true;
         Rectangle Ju = getRectangulo();
-        Ju.setY(y + pasos);
+        Ju.setY(y + (pasos * velocidad));
         for (ObjetoInerte obs : obstaculos) {
             if (Ju.intersects(obs.getRectangulo().getBoundsInLocal())) {
                 if (ObstaculoDirVertical(Ju, obs.getRectangulo())) {
-                    obstaculoEnfrente = true;
+                    viaLibre = false;
                     y = obs.getY() - alto;
                 }
             }
         }
-        if (!obstaculoEnfrente) { y += pasos; }
+        if (viaLibre) { y += (pasos * velocidad); }
+        return viaLibre;
     }
     
-    private void movimientoDeEscenario(int anchoDePantalla) {
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - distanciaCritica
+     * 
+     * Cuando el jugador esté en el punto ((anchoDePantalla / 2) - 2*ancho)
+     * el jugador estará sobrepasando una frontera invisible y a partir
+     * de ella el escenario se mueve pero la posición x del jugador no cambia.
+     * Este metodo hace distanciaCritica = true cuando sobrepase esa frontera.
+     * 
+     * @param anchoDePantalla
+     * @author Milton Lenis
+     */
+    private void determinarDistanciaCritica(int anchoDePantalla) {
         int distCrit = ((anchoDePantalla / 2) - 2*ancho);
         if (desplazamiento >= distCrit) {
             distanciaCritica = !(desplazamiento < (distCrit + pasos) && Teclado.isIZQUIERDA());
         } else distanciaCritica = false;
     }
     
-    // true si hay un obstaculo a la derecha o a la izquierda.
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * @param Jugador rectangulo con las dimensiones del jugador
+     * @param obstaculo rectangulo con las dimensiones del obstaculo con el que colisiona.
+     * @return true si la colision con un obstaculo es por la derecha o por la izquierda.
+     * @author Milton Lenis
+     */
     private boolean ObstaculoDirHorizontal(Rectangle Jugador, Rectangle obstaculo) {
         return !(Jugador.getBoundsInLocal().getMinY() == obstaculo.getBoundsInLocal().getMaxY()
                 || Jugador.getBoundsInLocal().getMaxY() == obstaculo.getBoundsInLocal().getMinY());
     }
     
-    // true si hay un obstaculo arriba o abajo.
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * @param Jugador rectangulo con las dimensiones del jugador
+     * @param obstaculo rectangulo con las dimensiones del obstaculo con el que colisiona.
+     * @return true si la colision con un obstaculo es por la derecha o por la izquierda.
+     * @author Milton Lenis
+     */
     private boolean ObstaculoDirVertical(Rectangle Jugador, Rectangle obstaculo) {
         return !(Jugador.getBoundsInLocal().getMaxX() == obstaculo.getBoundsInLocal().getMinX()
                 || Jugador.getBoundsInLocal().getMinX() == obstaculo.getBoundsInLocal().getMaxX());
     }
     
+    /**
+     * @author Diego Carvajal
+     */
     private void animacion() {
         boolean movimientoI = false; // si se está moviendo esto será true
         boolean movimientoD = false;

@@ -37,25 +37,41 @@ public class GraficosJuego extends Canvas {
         inicializar();
     }
     
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     * @throws IOException 
+     */
     private void inicializar() throws IOException{
         ejecutandose = true;
         //prepararMenu(); PRÓXIMAMENTE
         prepararJuego();
     }
     
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     * @throws IOException 
+     */
     private void prepararJuego() throws IOException {
         cargarJugador();
-        cargarEscenario();
+        cargarEscenarioDePrueba();
         //cargarEnemigos(); PRÓXIMAMENTE
     }
     
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     * @throws IOException 
+     */
     private void cargarJugador() throws IOException {
         // Se cargan la imagen del jugador        
         Image imagen = new Image("Nucleo/Recursos/Cucullatus.png");
         jugador = new Jugador(imagen);
     }
     
-    private void cargarEscenario() throws IOException {
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     * @throws IOException 
+     */
+    private void cargarEscenarioDePrueba() throws IOException {
         // Se cargan la imagen del fondo
         Image imagen = new Image("Nucleo/Recursos/fondo.png");
 
@@ -117,6 +133,10 @@ public class GraficosJuego extends Canvas {
         
     }
     
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     * @param lapiz 
+     */
     private void dibujar(GraphicsContext lapiz) {
         fondoDePrueba.dibujar(lapiz);
         mensajeDePrueba.dibujar(lapiz);
@@ -130,13 +150,15 @@ public class GraficosJuego extends Canvas {
         
         //////////////////////////////////////////
         /**
-         * Todo lo que va desde la linea 131 a 137 puede ser
-         * eliminado, solo sirve para depurar.
+         * Todo esto puede ser eliminado, solo sirve para depurar.
          */
         new Debug(lapiz);
         //////////////////////////////////////////
     }
     
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     */
     private void actualizar(){
         // Agregamos los obstaculos a una colección
         ArrayList<ObjetoInerte> obstaculos = new ArrayList<ObjetoInerte>();
@@ -158,6 +180,9 @@ public class GraficosJuego extends Canvas {
         obstaculo2_DePrueba.actualizar(jugador);
     }
     
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     */
     public void repintar() {
         GraphicsContext lapiz = this.getGraphicsContext2D();
         lapiz.clearRect(0, 0, anchoPantalla, altoPantalla);

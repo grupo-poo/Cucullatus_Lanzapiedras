@@ -39,10 +39,32 @@ public class ObjetoInerte {
         this.alto = alto;
     }
     
+    /**
+     * 
+     * *************************** METODO ALTERABLE ***************************
+     * 
+     * Este metodo dibuja al objeto inerte.
+     * 
+     * Se le pueden añadir nuevos metodos si así se requiere o cualquier
+     * otra alteración de su estructura.
+     * 
+     * @param lapiz Objeto de graficos
+     */
     public void dibujar(GraphicsContext lapiz) {
         lapiz.drawImage(imagen, x, y, ancho, alto);
     }
     
+    /**
+     * *************************** METODO ALTERABLE ***************************
+     * 
+     * Este metodo cambia los atributos que los metodos
+     * que contiene cambian por cada frame.
+     * 
+     * Se le pueden añadir nuevos metodos si así se requiere o cualquier
+     * otra alteración de su estructura.
+     * 
+     * @param jugador 
+     */
     public void actualizar(Jugador jugador) {
         if (jugador.isDistanciaCritica()) {
             x -= jugador.getVelocidad();
