@@ -149,7 +149,7 @@ public class Jugador {
             
             
         }
-        if (!obstaculoEnfrente && this.y==727) { y -= 10*pasos;
+        if (!obstaculoEnfrente) { y -= pasos;
        
         }
         
@@ -308,7 +308,7 @@ public class Jugador {
     public void Graffitear(ArrayList<Pared> paredes){
         
         for(Pared pared: paredes){
-            if((pared.getX()+40<=this.ancho+this.x && pared.getX()+pared.getAncho()>=this.x+40)  && Teclado.isVANDALIZAR()){
+            if((pared.getX()+40<=this.ancho+this.x && pared.getX()+pared.getAncho()>=this.x+40)  && Teclado.isVANDALIZAR() && y==727){//Se puede generalizar para todo obstáculo que tenga encima la pared
                 Image imagen=new Image("Nucleo/Recursos/Paredmodificada.png");
                 pared.setImagen(imagen);
             }
