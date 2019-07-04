@@ -2,6 +2,7 @@ package Personajes;
 
 import Control.Teclado;
 import Escenario.ObjetoInerte;
+import Escenario.Pared;
 import Nucleo.Debug;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,6 +21,8 @@ public class Jugador {
     private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
     private Image imagen;
+    
+    private int graf; //Total de grafitis en el bolsillo
     
     private int secuencia = 1;//Numero de imagenes, empieza por 1
    
@@ -44,6 +47,11 @@ public class Jugador {
         movimientoDeEscenario(anchoDePantalla);
         mover(obstaculos); // Aquí movemos al jugador.
         animacion();
+        
+        
+        
+        
+        
     }
     
     private void mover(ArrayList<ObjetoInerte> obstaculos) {
@@ -74,6 +82,8 @@ public class Jugador {
         Debug.lapiz.fillText("Distancia Critica: " + distanciaCritica, 20, 78);
         //////////////////////////////////////////
     }
+    
+    
     
     private void desplazarseIzquierda(ArrayList<ObjetoInerte> obstaculos) {
         boolean obstaculoEnfrente = false;
@@ -132,8 +142,17 @@ public class Jugador {
                     y = obs.getY() + obs.getAlto();
                 }
             }
+            
+               
+        
+        
+            
+            
         }
-        if (!obstaculoEnfrente) { y -= pasos; }
+        if (!obstaculoEnfrente && this.y==727) { y -= 10*pasos;
+       
+        }
+        
     }
     
     private void desplazarseAbajo(ArrayList<ObjetoInerte> obstaculos) {
@@ -171,6 +190,7 @@ public class Jugador {
     }
     
     private void animacion() {
+        
         boolean movimientoI = false; // si se está moviendo esto será true
         boolean movimientoD = false;
         
@@ -204,6 +224,9 @@ public class Jugador {
         
     
     }
+    
+    
+  
     
     public Rectangle getRectangulo() {
         return new Rectangle(x, y, ancho, alto);
@@ -280,6 +303,18 @@ public class Jugador {
     public void setImagen(Image imagen) {
         this.imagen = imagen;
     }
+    
+    
+    public void Graffitear(ArrayList<Pared> paredes){
+        
+        for(Pared pared: paredes){
+            if((pared.getX()+40<=this.ancho+this.x && pared.getX()+pared.getAncho()>=this.x+40)  && Teclado.isVANDALIZAR()){
+                Image imagen=new Image("Nucleo/Recursos/Paredmodificada.png");
+                pared.setImagen(imagen);
+            }
+        }
+    }
+    
 
     
     

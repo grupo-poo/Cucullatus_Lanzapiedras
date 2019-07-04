@@ -1,6 +1,7 @@
 package Nucleo;
 
 import Escenario.ObjetoInerte;
+import Escenario.Pared;
 import Personajes.Jugador;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class GraficosJuego extends Canvas {
     private ObjetoInerte suelo2_DePrueba;
     private ObjetoInerte obstaculo1_DePrueba;
     private ObjetoInerte obstaculo2_DePrueba;
+   
+    
+    private ArrayList<Pared> paredes;
     
     private final int altoPantalla;
     private final int anchoPantalla;
@@ -34,7 +38,9 @@ public class GraficosJuego extends Canvas {
         super(anchoPantalla, altoPantalla);
         this.altoPantalla = (int) altoPantalla;
         this.anchoPantalla = (int) anchoPantalla;
+        paredes= new ArrayList<>();
         inicializar();
+        
     }
     
     private void inicializar() throws IOException{
@@ -58,8 +64,14 @@ public class GraficosJuego extends Canvas {
     private void cargarEscenario() throws IOException {
         // Se cargan la imagen del fondo
         Image imagen = new Image("Nucleo/Recursos/fondo.png");
-
-        // Se crea el fondo y se le añade la imagen
+        Image pared = new Image("Nucleo/Recursos/Pared.png");
+        
+        //Pared
+        
+        this.añadirPared(pared,300,711, 90,90);
+        
+        
+        // Se crea el fondo y se le añade la imagen 
         fondoDePrueba = new ObjetoInerte(imagen);
         fondoDePrueba.setAlto(altoPantalla);
         
@@ -118,7 +130,11 @@ public class GraficosJuego extends Canvas {
     }
     
     private void dibujar(GraphicsContext lapiz) {
+
         fondoDePrueba.dibujar(lapiz);
+        for(int i=0; i<paredes.size();i++){
+            paredes.get(i).dibujar(lapiz);
+        }
         mensajeDePrueba.dibujar(lapiz);
         ObjetoFlotanteDePrueba1.dibujar(lapiz);
         ObjetoFlotanteDePrueba2.dibujar(lapiz);
@@ -127,6 +143,7 @@ public class GraficosJuego extends Canvas {
         obstaculo1_DePrueba.dibujar(lapiz);
         obstaculo2_DePrueba.dibujar(lapiz);
         jugador.dibujar(lapiz);
+        
         
         //////////////////////////////////////////
         /**
@@ -156,6 +173,11 @@ public class GraficosJuego extends Canvas {
         suelo2_DePrueba.actualizar(jugador);
         obstaculo1_DePrueba.actualizar(jugador);
         obstaculo2_DePrueba.actualizar(jugador);
+        jugador.Graffitear(paredes);
+        
+        for(int i=0; i<paredes.size();i++){
+            paredes.get(i).actualizar(jugador);
+        }
     }
     
     public void repintar() {
@@ -163,6 +185,7 @@ public class GraficosJuego extends Canvas {
         lapiz.clearRect(0, 0, anchoPantalla, altoPantalla);
         dibujar(lapiz);
         actualizar();
+      
     }
 
     /*
@@ -173,6 +196,12 @@ public class GraficosJuego extends Canvas {
 
     public boolean isEjecutandose() {
         return ejecutandose;
+    }
+    
+    
+    public void añadirPared(Image imagen, int x, int y, int ancho, int alto){
+        Pared pared=new Pared(imagen, x, y, ancho, alto);
+        paredes.add(pared);
     }
     
 }
