@@ -66,14 +66,12 @@ public class GraficosJuego extends Canvas {
         Image imagen = new Image("Nucleo/Recursos/fondo.png");
         Image pared = new Image("Nucleo/Recursos/Pared.png");
         
-        //Pared
-        
-        this.añadirPared(pared,300,711, 90,90);
         
         
         // Se crea el fondo y se le añade la imagen 
         fondoDePrueba = new ObjetoInerte(imagen);
         fondoDePrueba.setAlto(altoPantalla);
+        
         
         // Se preparan los elementos del escenario
         
@@ -105,13 +103,18 @@ public class GraficosJuego extends Canvas {
          * 4, 5, 6, 7... y muchas otras pero me da flojera harcerlas todas.
          * Ah, y el orden no importa.
          */
+        System.out.println(this.anchoPantalla + " "+ this.altoPantalla);
         suelo1_DePrueba = new ObjetoInerte(imagen);
-        suelo1_DePrueba.setDimensiones(600, 100);
+        suelo1_DePrueba.setDimensiones(this.anchoPantalla/3, this.altoPantalla/9);
         suelo1_DePrueba.setX(0);
         suelo1_DePrueba.setY(altoPantalla - suelo1_DePrueba.getAlto());
         
+        //Pared
+        
+        this.añadirPared(pared,suelo1_DePrueba.getX()+160,suelo1_DePrueba.getY()-90, 90,90);
+        // 
         suelo2_DePrueba = new ObjetoInerte(imagen);
-        suelo2_DePrueba.setCoordenadas(700, suelo1_DePrueba.getY());
+        suelo2_DePrueba.setCoordenadas(suelo1_DePrueba.getX()+suelo1_DePrueba.getAncho()+200, suelo1_DePrueba.getY());
         suelo2_DePrueba.setAncho(600);
         suelo2_DePrueba.setAlto(100);
         

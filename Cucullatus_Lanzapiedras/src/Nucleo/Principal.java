@@ -40,7 +40,7 @@ public class Principal extends Application {
         escena.setOnKeyPressed(tecla -> Teclado.keyPressed(tecla.getCode()));
         escena.setOnKeyReleased(tecla -> Teclado.keyReleased(tecla.getCode()));
         ventana.initStyle(StageStyle.UNDECORATED); // Esconder barra ( - [] X ).
-        ventana.setMaximized(true);
+        ventana.setMaximized(false);
         ventana.setScene(escena);
         ventana.show();
         

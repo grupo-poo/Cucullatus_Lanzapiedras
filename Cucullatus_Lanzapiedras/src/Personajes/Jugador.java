@@ -308,7 +308,7 @@ public class Jugador {
     public void Graffitear(ArrayList<Pared> paredes){
         
         for(Pared pared: paredes){
-            if((pared.getX()+40<=this.ancho+this.x && pared.getX()+pared.getAncho()>=this.x+40)  && Teclado.isVANDALIZAR()){//Se puede generalizar para todo obstáculo que tenga encima la pared
+            if((pared.getX()+pared.getAncho()-10>=this.x+this.ancho && pared.getX()+10<=this.x)  && Teclado.isVANDALIZAR()){//Se puede generalizar para todo obstáculo que tenga encima la pared
                 Image imagen=new Image("Nucleo/Recursos/Paredmodificada.png");
                 pared.setImagen(imagen);
             }
