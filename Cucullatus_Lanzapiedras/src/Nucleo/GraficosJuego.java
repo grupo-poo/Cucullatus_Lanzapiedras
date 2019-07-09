@@ -1,5 +1,6 @@
 package Nucleo;
 
+import Escenario.Corazones;
 import Escenario.ObjetoInerte;
 import Escenario.Pared;
 import Personajes.Jugador;
@@ -25,6 +26,7 @@ public class GraficosJuego extends Canvas {
     private ObjetoInerte suelo2_DePrueba;
     private ObjetoInerte obstaculo1_DePrueba;
     private ObjetoInerte obstaculo2_DePrueba;
+    private int cuenta=0;
    
     
     private ArrayList<Pared> paredes;
@@ -63,6 +65,8 @@ public class GraficosJuego extends Canvas {
     
     private void cargarEscenario() throws IOException {
         // Se cargan la imagen del fondo
+        Corazones.Setall(50,50);
+        
         Image imagen = new Image("Nucleo/Recursos/fondo.png");
         Image pared = new Image("Nucleo/Recursos/Pared.png");
         
@@ -146,6 +150,17 @@ public class GraficosJuego extends Canvas {
         obstaculo1_DePrueba.dibujar(lapiz);
         obstaculo2_DePrueba.dibujar(lapiz);
         jugador.dibujar(lapiz);
+        Corazones.dibujar(lapiz, jugador.getVida());
+        
+        if(cuenta<=10){
+                if(cuenta == 10) {
+                    cuenta = 0;
+                    if(jugador.getVida() == 10) jugador.setVida(0);
+                    else jugador.setVida(jugador.getVida()+1); 
+                 }
+                else cuenta++;
+            }
+        
         
         
         //////////////////////////////////////////

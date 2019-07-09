@@ -21,6 +21,7 @@ public class Jugador {
     private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
     private Image imagen;
+    private int vida;
     
     private int graf; //Total de grafitis en el bolsillo
     
@@ -36,6 +37,15 @@ public class Jugador {
         x = 40;     y = 550;
         desplazamiento = x;
         pasos = 3;
+        vida=10;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
     }
     
     public void dibujar(GraphicsContext lapiz) {
