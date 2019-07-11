@@ -3,12 +3,15 @@ package Nucleo;
 import Escenario.Corazones;
 import Escenario.ObjetoInerte;
 import Escenario.Pared;
+import Personajes.Enemigo;
 import Personajes.Jugador;
 import java.io.IOException;
 import java.util.ArrayList;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 
 
 /**
@@ -27,6 +30,7 @@ public class GraficosJuego extends Canvas {
     private ObjetoInerte obstaculo1_DePrueba;
     private ObjetoInerte obstaculo2_DePrueba;
     private int cuenta=0;
+    private Enemigo enemigo1;
    
     
     private ArrayList<Pared> paredes;
@@ -65,11 +69,13 @@ public class GraficosJuego extends Canvas {
     
     private void cargarEscenario() throws IOException {
         // Se cargan la imagen del fondo
-        Corazones.Setall(50,50);
+        Corazones.Setall(anchoPantalla/5,altoPantalla/500);
         
         Image imagen = new Image("Nucleo/Recursos/fondo.png");
         Image pared = new Image("Nucleo/Recursos/Pared.png");
         
+        //Enemigo
+        enemigo1=new Enemigo(2000,500,20,150,150);
         
         
         // Se crea el fondo y se le añade la imagen 
@@ -119,8 +125,10 @@ public class GraficosJuego extends Canvas {
         // 
         suelo2_DePrueba = new ObjetoInerte(imagen);
         suelo2_DePrueba.setCoordenadas(suelo1_DePrueba.getX()+suelo1_DePrueba.getAncho()+200, suelo1_DePrueba.getY());
-        suelo2_DePrueba.setAncho(600);
+        Rectangle2D dim = Screen.getPrimary().getBounds();
+        suelo2_DePrueba.setAncho((int) dim.getWidth()-suelo2_DePrueba.getX());
         suelo2_DePrueba.setAlto(100);
+        suelo2_DePrueba.setAlargamiento(true);
         
         obstaculo1_DePrueba = new ObjetoInerte(imagen);
         obstaculo1_DePrueba.setAncho(150);
@@ -151,6 +159,7 @@ public class GraficosJuego extends Canvas {
         obstaculo2_DePrueba.dibujar(lapiz);
         jugador.dibujar(lapiz);
         Corazones.dibujar(lapiz, jugador.getVida());
+        enemigo1.dibujar(lapiz,jugador);
         
         if(cuenta<=10){
                 if(cuenta == 10) {
@@ -192,6 +201,7 @@ public class GraficosJuego extends Canvas {
         obstaculo1_DePrueba.actualizar(jugador);
         obstaculo2_DePrueba.actualizar(jugador);
         jugador.Graffitear(paredes);
+        enemigo1.actualizar(jugador);
         
         for(int i=0; i<paredes.size();i++){
             paredes.get(i).actualizar(jugador);

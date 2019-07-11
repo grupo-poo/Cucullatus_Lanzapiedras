@@ -19,7 +19,7 @@ public class Corazones {
     private static int X;
     private static int Y;
     private static Image Imagen;
-    private static int cuenta=0;
+    
   
     
     
