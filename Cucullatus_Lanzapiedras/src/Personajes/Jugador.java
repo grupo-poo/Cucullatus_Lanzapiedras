@@ -14,15 +14,20 @@ import javafx.scene.shape.Rectangle;
 public class Jugador {
     
     private byte pasos;   // Número de pixeles que debe recorrer por frame.
-    private int velocidad; // pixeles que recorre en tiempo real.
+    private int velocidadHorizontal; // pixeles que recorre horizontalmente en tiempo real.
+    private int velocidadVertical; // pixeles que recorre verticalmente en tiempo real.
     private int ancho, alto; // Dimensiones de la imagen del Jugador.
     private int x, y; // Coordenadas del jugador en la pantalla.
     private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
     private Image imagen;
     
+    // Auxiliares para la gravedad.
+    private boolean salto = false; // si es true se puede realizar un salto.
+    private int countAuxForGravity = 0; // Contador auxiliar para la gravedad.
+    
+    // Auxiliares para la animación.
     private int secuencia = 1;//Numero de imagenes, empieza por 1
-   
     private int cuenta= 0;//Ayuda a controlar la cantidad de veces que se pintan las imágenes
   
     
@@ -30,9 +35,10 @@ public class Jugador {
         this.imagen = imagen;
         ancho = (int) imagen.getWidth();
         alto  = (int) imagen.getHeight();
-        x = 40;     y = 550;
+        x = 40;     y = 55;
         desplazamiento = x;
         pasos = 3;
+        velocidadVertical = 1;
     }
     
     /**
@@ -74,8 +80,9 @@ public class Jugador {
         Debug.lapiz.fillText("Desplazamiento: " + desplazamiento, 20, 30);
         Debug.lapiz.fillText("Posición x: " + x, 20, 42);
         Debug.lapiz.fillText("Posición y: " + y, 20, 54);
-        Debug.lapiz.fillText("Velocidad: " + velocidad, 20, 66);
+        Debug.lapiz.fillText("Velocidad: " + velocidadHorizontal, 20, 66);
         Debug.lapiz.fillText("Distancia Critica: " + distanciaCritica, 20, 78);
+        Debug.lapiz.fillText("Salto: " + salto, 20, 90);
         //////////////////////////////////////////
     }
     
@@ -88,7 +95,7 @@ public class Jugador {
      * - desplazamiento
      * - velocidad
      * 
-     * Contiene la instrucciones que permiten mover
+     * Contiene las instrucciones que permiten mover
      * al jugador por el escenario.
      * 
      * Se le pueden añadir nuevos metodos si así se requiere o cualquier
@@ -97,9 +104,8 @@ public class Jugador {
      * @param obstaculos array de obstaculos.
      */
     private void mover(ArrayList<ObjetoInerte> obstaculos) {
-        velocidad = desplazamiento;
-        
-        desplazarseAbajo(obstaculos, 3); // Gravedad sin aceleración XD
+        velocidadHorizontal = desplazamiento;
+        boolean estaTocandoSuelo = gravedad(obstaculos);
         
         if (Teclado.isIZQUIERDA()) {
             desplazarseIzquierda(obstaculos);
@@ -108,9 +114,71 @@ public class Jugador {
             desplazarseDerecha(obstaculos);
         }
         if (Teclado.isARRIBA()) {
-            desplazarseArriba(obstaculos, 4); // 1+ que la gravedad.
+            if (estaTocandoSuelo) {
+               salto = true;
+            }
         }
-        velocidad = desplazamiento - velocidad;
+        saltar(obstaculos);
+        velocidadHorizontal = desplazamiento - velocidadHorizontal;
+    }
+    
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - countAuxForGravity
+     * - velocidadVertical
+     * 
+     * Hace que el jugador caiga con aceleración hasta posarse sobre alguna
+     * base.
+     * 
+     * No se puede invocar este metodo más de una vez dentro de
+     * ningún metodo.
+     * 
+     * @param obstaculos array de obstaculos.
+     * @return Devuelve true si el jugador intercepta con algo debajo de él.
+     * @author Milton Lenis
+     */
+    boolean gravedad(ArrayList<ObjetoInerte> obstaculos) {
+        if(countAuxForGravity == 10) {
+            countAuxForGravity = 0;
+            velocidadVertical += 2;
+        } else {
+            countAuxForGravity++;
+        }
+        boolean hayAlgoAbajo = !desplazarseAbajo(obstaculos, velocidadVertical);
+        if (hayAlgoAbajo) {
+            velocidadVertical = 1;
+            countAuxForGravity = 0;
+        }
+        return hayAlgoAbajo;
+    }
+    
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - salto
+     * - velocidadVertical
+     * 
+     * Hace que el jugador salte con desaceleracion hasta cierto punto.
+     * Si choca con algún objeto arriba de él la desaceleración es total.
+     * 
+     * No se puede invocar este metodo más de una vez dentro de
+     * ningún metodo.
+     * 
+     * @param obstaculos array de obstaculos.
+     * @author Milton Lenis
+     */
+    public void saltar(ArrayList<ObjetoInerte> obstaculos) {
+        if (salto) {
+            int alturaDeSalto = 6;
+            boolean hayAlgoArriba = !desplazarseArriba(obstaculos, alturaDeSalto);
+            if ((alturaDeSalto - velocidadVertical) <= 0 || hayAlgoArriba) {
+                salto = false;
+                velocidadVertical = 1;
+            }
+        }
     }
     
     /**
@@ -123,7 +191,8 @@ public class Jugador {
      * Permite que el jugador se mueva a la izquierda siempre y cuando
      * no haya un obstaculo en esa dirección.
      * 
-     * No se puede invocar este metodo más de una vez en ningún otro metodo.
+     * No se puede invocar este metodo más de una vez dentro de
+     * ningún metodo.
      * 
      * @param obstaculos array de obstaculos.
      * @return Devuelve false si se intersepta un obstaculo.
@@ -163,7 +232,8 @@ public class Jugador {
      * Permite que el jugador se mueva a la derecha siempre y cuando
      * no haya un obstaculo en esa dirección.
      * 
-     * No se puede invocar este metodo más de una vez en ningún otro metodo.
+     * No se puede invocar este metodo más de una vez dentro de
+     * ningún metodo.
      * 
      * @param obstaculos array de obstaculos.
      * @return Devuelve false si se intersepta un obstaculo.
@@ -202,7 +272,8 @@ public class Jugador {
      * Permite que el jugador se mueva hacia arriba siempre y cuando
      * no haya un obstaculo en esa dirección.
      * 
-     * No se puede invocar este metodo más de una vez en ningún otro metodo.
+     * No se puede invocar este metodo más de una vez dentro de
+     * ningún metodo.
      * 
      * @param obstaculos array de obstaculos.
      * @param velocidad velocidad a la que se moverá el jugador.
@@ -234,7 +305,8 @@ public class Jugador {
      * Permite que el jugador se mueva hacia abajo siempre y cuando
      * no haya un obstaculo en esa dirección.
      * 
-     * No se puede invocar este metodo más de una vez en ningún otro metodo.
+     * No se puede invocar este metodo más de una vez dentro de
+     * ningún metodo.
      * 
      * @param obstaculos array de obstaculos.
      * @param velocidad velocidad a la que se moverá el jugador.
@@ -309,18 +381,15 @@ public class Jugador {
         boolean movimientoI = false; // si se está moviendo esto será true
         boolean movimientoD = false;
         
-        if (velocidad < 0) {
+        if (velocidadHorizontal < 0) {
             this.imagen = new Image("CorrerI/"+this.secuencia+".png");
             movimientoI = true;
-            
         } 
         
-        if (velocidad > 0) {
-            
+        if (velocidadHorizontal > 0) {
             movimientoD = true;
             this.imagen = new Image("CorrerD/"+this.secuencia+".png");
         } 
-        
         
         if (((!movimientoI  && movimientoD) || (!movimientoD && movimientoI))) { //Operador lógico "XOR"
             
@@ -332,12 +401,7 @@ public class Jugador {
                  }
                 else cuenta++;
             }
-            
-            
-            }
-        
-        
-    
+        }
     }
     
     public Rectangle getRectangulo() {
@@ -352,12 +416,20 @@ public class Jugador {
         this.pasos = pasos;
     }
 
-    public int getVelocidad() {
-        return velocidad;
+    public int getVelocidadHorizontal() {
+        return velocidadHorizontal;
     }
 
-    public void setVelocidad(int velocidad) {
-        this.velocidad = velocidad;
+    public void setVelocidadHorizontal(int velocidad) {
+        this.velocidadHorizontal = velocidad;
+    }
+
+    public int getVelocidadVertical() {
+        return velocidadVertical;
+    }
+
+    public void setVelocidadVertical(int velocidadVertical) {
+        this.velocidadVertical = velocidadVertical;
     }
 
     public int getAncho() {
