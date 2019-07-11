@@ -24,7 +24,19 @@ public class Jugador {
     private int secuencia = 1;//Numero de imagenes, empieza por 1
    
     private int cuenta= 0;//Ayuda a controlar la cantidad de veces que se pintan las imágenes
-  
+    
+    //las cuatro weas creadas aqui abbajo sirven para la gravedad
+    private int velAGIn = 5;
+    private int velAG = velAGIn;
+    private int auxG = 0;
+    private int auxGIn = 0;
+    private int tSal = 10;
+    private int modulador = 3;
+    private int acG = 2; //aceleracion de la gravedad en pixeleles/modulador^2
+    private boolean saltoIn = false;
+    private Boolean bloqueoARR = false;
+    private Boolean bloqueoSal = false;
+    private Boolean jumped = false;
     
     public Jugador(Image imagen) {
         this.imagen = imagen;
@@ -76,6 +88,12 @@ public class Jugador {
         Debug.lapiz.fillText("Posición y: " + y, 20, 54);
         Debug.lapiz.fillText("Velocidad: " + velocidad, 20, 66);
         Debug.lapiz.fillText("Distancia Critica: " + distanciaCritica, 20, 78);
+        Debug.lapiz.fillText("auxG: " + auxG, 20, 90);
+        Debug.lapiz.fillText("auxGIn: " + auxGIn, 20, 102);
+        Debug.lapiz.fillText("auxG - auxGIn: " + (auxG - auxGIn), 20, 114);
+        Debug.lapiz.fillText("bloqueoARR: " + bloqueoARR, 20, 126);
+        Debug.lapiz.fillText("bloqueoSal: " + bloqueoSal, 20, 138);
+        Debug.lapiz.fillText("velAG: " + velAG, 20, 150);
         //////////////////////////////////////////
     }
     
@@ -97,9 +115,17 @@ public class Jugador {
      * @param obstaculos array de obstaculos.
      */
     private void mover(ArrayList<ObjetoInerte> obstaculos) {
-        velocidad = desplazamiento;
         
-        desplazarseAbajo(obstaculos, 3); // Gravedad sin aceleración XD
+        /**
+         * author Milton
+         * inspiracion : hilos mosc supongo no soy Milton :v
+         * coder: Dios
+         */
+        
+        velocidad = desplazamiento;
+        auxG++;
+        
+        desplazarseAbajo(obstaculos, velAG+1); // Gravedad sin aceleración XD
         
         if (Teclado.isIZQUIERDA()) {
             desplazarseIzquierda(obstaculos);
@@ -107,8 +133,40 @@ public class Jugador {
         if (Teclado.isDERECHA()) {
             desplazarseDerecha(obstaculos);
         }
-        if (Teclado.isARRIBA()) {
-            desplazarseArriba(obstaculos, 4); // 1+ que la gravedad.
+        
+        if(!bloqueoSal){
+            if(Teclado.isARRIBA()){
+                saltoIn = true;
+                auxGIn = auxG;
+                bloqueoSal = true;
+                jumped = true;
+            }
+        }
+        
+        if(auxG - auxGIn == (tSal*2)){
+            bloqueoSal = false;
+            bloqueoARR = false;
+            saltoIn = false;
+        }
+        
+        if(auxG - auxGIn == tSal){
+            bloqueoARR = true;
+            velAG = velAGIn;
+        }
+        
+        if(bloqueoARR && !bloqueoSal && jumped){
+            if(auxG % modulador == 0){
+                    velAG = velAG + acG;
+                }
+        }
+        
+        if(saltoIn){
+            if(!bloqueoARR){
+                desplazarseArriba(obstaculos, (velAG*2)+1); // 1+ que la gravedad.
+                if(auxG % modulador == 0){
+                    velAG = velAG - acG;
+                }
+            }
         }
         velocidad = desplazamiento - velocidad;
     }
