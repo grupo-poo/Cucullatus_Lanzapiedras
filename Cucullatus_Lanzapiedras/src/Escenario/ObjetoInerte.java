@@ -47,9 +47,9 @@ public class ObjetoInerte {
     public void actualizar(Jugador jugador) {
         
         if (jugador.isDistanciaCritica()) {
-            x -= jugador.getVelocidad();
+            x -= jugador.getVelocidadHorizontal();
             if(Alargamiento)
-            ancho+=jugador.getVelocidad();
+            ancho+=jugador.getVelocidadHorizontal();
         }
     }
     

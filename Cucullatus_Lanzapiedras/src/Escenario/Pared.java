@@ -51,7 +51,7 @@ public class Pared {
     
     public void actualizar(Jugador jugador) {
         if (jugador.isDistanciaCritica()) {
-            x -= jugador.getVelocidad();
+            x -= jugador.getVelocidadHorizontal();
         }
     }
     
