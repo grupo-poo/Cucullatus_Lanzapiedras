@@ -27,10 +27,11 @@ public class Principal extends Application {
     public static void main(String[] args) {
         launch();
     }
-    
+
     @Override
     public void start(Stage ventana) throws Exception {
         getDimPantalla();
+        
         juego = new GraficosJuego(anchoPantalla, altoPantalla);
         
         panel = new Pane();
@@ -39,9 +40,17 @@ public class Principal extends Application {
         escena = new Scene(panel);
         escena.setOnKeyPressed(tecla -> Teclado.keyPressed(tecla.getCode()));
         escena.setOnKeyReleased(tecla -> Teclado.keyReleased(tecla.getCode()));
+        
         ventana.initStyle(StageStyle.UNDECORATED); // Esconder barra ( - [] X ).
         ventana.setMaximized(true);
-        ventana.setScene(escena);
+        //cambio ventana
+        Singleton singleton = Singleton.getSingleton();
+        singleton.setStage(ventana);
+        singleton.setEscena(escena);
+        
+        Controlador controlador = new Controlador();
+        
+        ventana.setScene(controlador.getEscena());
         ventana.show();
         
         AnimationTimer animacion = new AnimationTimer() {
@@ -58,5 +67,6 @@ public class Principal extends Application {
         anchoPantalla = (int) dim.getWidth();
         altoPantalla = (int) dim.getHeight();
     }
+
 }
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 /**
  * Todas las mecanicas del Jugador se establecen aquí.
@@ -117,7 +118,8 @@ public class Jugador {
             if (estaTocandoSuelo) {
                salto = true;
             }
-        }
+        
+        }       
         saltar(obstaculos);
         velocidadHorizontal = desplazamiento - velocidadHorizontal;
     }
@@ -373,7 +375,9 @@ public class Jugador {
         return !(Jugador.getBoundsInLocal().getMaxX() == obstaculo.getBoundsInLocal().getMinX()
                 || Jugador.getBoundsInLocal().getMinX() == obstaculo.getBoundsInLocal().getMaxX());
     }
-    
+    private void cerrar(Stage ventana){
+        ventana.close();
+    }
     /**
      * @author Diego Carvajal
      */
@@ -403,7 +407,7 @@ public class Jugador {
             }
         }
     }
-    
+        
     public Rectangle getRectangulo() {
         return new Rectangle(x, y, ancho, alto);
     }

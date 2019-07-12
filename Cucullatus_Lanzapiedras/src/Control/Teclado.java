@@ -12,6 +12,7 @@ public class Teclado {
     private static boolean ABAJO;
     private static boolean DERECHA;
     private static boolean IZQUIERDA;
+    private static boolean PAUSA;
 
     public static void keyPressed(KeyCode tecla) {
         
@@ -23,6 +24,8 @@ public class Teclado {
             DERECHA = true;
         }else if (tecla == KeyCode.LEFT) {
             IZQUIERDA = true;
+        }else if(tecla == KeyCode.P){
+            PAUSA = true;
         }
     }
 
@@ -70,4 +73,13 @@ public class Teclado {
     public static void setIZQUIERDA(boolean IZQUIERDA) {
         Teclado.IZQUIERDA = IZQUIERDA;
     }
+
+    public static boolean isPAUSA() {
+        return PAUSA;
+    }
+
+    public static void setPAUSA(boolean PAUSA) {
+        Teclado.PAUSA = PAUSA;
+    }
+    
 }

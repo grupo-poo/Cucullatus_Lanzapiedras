@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 
 
@@ -43,7 +44,6 @@ public class GraficosJuego extends Canvas {
      */
     private void inicializar() throws IOException{
         ejecutandose = true;
-        //prepararMenu(); PRÓXIMAMENTE
         prepararJuego();
     }
     
