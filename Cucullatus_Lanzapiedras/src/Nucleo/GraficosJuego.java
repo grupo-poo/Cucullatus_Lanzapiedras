@@ -1,12 +1,13 @@
 package Nucleo;
 
+import Escenario.Corazones;
 import Escenario.ObjetoInerte;
+import Escenario.Pared;
 import Personajes.Jugador;
 import java.io.IOException;
 import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 
 
@@ -25,6 +26,10 @@ public class GraficosJuego extends Canvas {
     private ObjetoInerte suelo2_DePrueba;
     private ObjetoInerte obstaculo1_DePrueba;
     private ObjetoInerte obstaculo2_DePrueba;
+    private int cuenta=0;
+   
+    
+    private ArrayList<Pared> paredes;
     
     private final int altoPantalla;
     private final int anchoPantalla;
@@ -35,7 +40,9 @@ public class GraficosJuego extends Canvas {
         super(anchoPantalla, altoPantalla);
         this.altoPantalla = (int) altoPantalla;
         this.anchoPantalla = (int) anchoPantalla;
+        paredes= new ArrayList<>();
         inicializar();
+        
     }
     
     /**
@@ -73,11 +80,15 @@ public class GraficosJuego extends Canvas {
      */
     private void cargarEscenarioDePrueba() throws IOException {
         // Se cargan la imagen del fondo
+        Corazones.Setall(50,50);
+        
         Image imagen = new Image("Nucleo/Recursos/fondo.png");
-
-        // Se crea el fondo y se le añade la imagen
+        Image pared = new Image("Nucleo/Recursos/Pared.png");
+        
+        // Se crea el fondo y se le añade la imagen 
         fondoDePrueba = new ObjetoInerte(imagen);
         fondoDePrueba.setAlto(altoPantalla);
+        
         
         // Se preparan los elementos del escenario
         
@@ -110,12 +121,16 @@ public class GraficosJuego extends Canvas {
          * Ah, y el orden no importa.
          */
         suelo1_DePrueba = new ObjetoInerte(imagen);
-        suelo1_DePrueba.setDimensiones(600, 100);
+        suelo1_DePrueba.setDimensiones(this.anchoPantalla/3, this.altoPantalla/9);
         suelo1_DePrueba.setX(0);
         suelo1_DePrueba.setY(altoPantalla - suelo1_DePrueba.getAlto());
         
+        //Pared
+        
+        this.añadirPared(pared,suelo1_DePrueba.getX()+160,suelo1_DePrueba.getY()-90, 90,90);
+        // 
         suelo2_DePrueba = new ObjetoInerte(imagen);
-        suelo2_DePrueba.setCoordenadas(700, suelo1_DePrueba.getY());
+        suelo2_DePrueba.setCoordenadas(suelo1_DePrueba.getX()+suelo1_DePrueba.getAncho()+200, suelo1_DePrueba.getY());
         suelo2_DePrueba.setAncho(600);
         suelo2_DePrueba.setAlto(100);
         
@@ -138,7 +153,11 @@ public class GraficosJuego extends Canvas {
      * @param lapiz 
      */
     private void dibujar(GraphicsContext lapiz) {
+
         fondoDePrueba.dibujar(lapiz);
+        for(int i=0; i<paredes.size();i++){
+            paredes.get(i).dibujar(lapiz);
+        }
         mensajeDePrueba.dibujar(lapiz);
         ObjetoFlotanteDePrueba1.dibujar(lapiz);
         ObjetoFlotanteDePrueba2.dibujar(lapiz);
@@ -147,6 +166,18 @@ public class GraficosJuego extends Canvas {
         obstaculo1_DePrueba.dibujar(lapiz);
         obstaculo2_DePrueba.dibujar(lapiz);
         jugador.dibujar(lapiz);
+        Corazones.dibujar(lapiz, jugador.getVida());
+        
+        if(cuenta<=10){
+                if(cuenta == 10) {
+                    cuenta = 0;
+                    if(jugador.getVida() == 10) jugador.setVida(0);
+                    else jugador.setVida(jugador.getVida()+1); 
+                 }
+                else cuenta++;
+            }
+        
+        
         
         //////////////////////////////////////////
         /**
@@ -178,6 +209,11 @@ public class GraficosJuego extends Canvas {
         suelo2_DePrueba.actualizar(jugador);
         obstaculo1_DePrueba.actualizar(jugador);
         obstaculo2_DePrueba.actualizar(jugador);
+        jugador.Graffitear(paredes);
+        
+        for(int i=0; i<paredes.size();i++){
+            paredes.get(i).actualizar(jugador);
+        }
     }
     
     /**
@@ -188,6 +224,7 @@ public class GraficosJuego extends Canvas {
         lapiz.clearRect(0, 0, anchoPantalla, altoPantalla);
         dibujar(lapiz);
         actualizar();
+      
     }
 
     /*
@@ -198,6 +235,12 @@ public class GraficosJuego extends Canvas {
 
     public boolean isEjecutandose() {
         return ejecutandose;
+    }
+    
+    
+    public void añadirPared(Image imagen, int x, int y, int ancho, int alto){
+        Pared pared=new Pared(imagen, x, y, ancho, alto);
+        paredes.add(pared);
     }
     
 }

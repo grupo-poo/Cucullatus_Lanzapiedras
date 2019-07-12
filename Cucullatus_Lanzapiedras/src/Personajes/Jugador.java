@@ -2,6 +2,7 @@ package Personajes;
 
 import Control.Teclado;
 import Escenario.ObjetoInerte;
+import Escenario.Pared;
 import Nucleo.Debug;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,6 +23,9 @@ public class Jugador {
     private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
     private Image imagen;
+    private int vida;
+    
+    private int graf; //Total de grafitis en el bolsillo
     
     // Auxiliares para la gravedad.
     private boolean salto = false; // si es true se puede realizar un salto.
@@ -40,6 +44,15 @@ public class Jugador {
         desplazamiento = x;
         pasos = 3;
         velocidadVertical = 1;
+        vida=10;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
     }
     
     /**
@@ -123,6 +136,8 @@ public class Jugador {
         saltar(obstaculos);
         velocidadHorizontal = desplazamiento - velocidadHorizontal;
     }
+    
+    
     
     /**
      * ************************* METODO NO ALTERABLE *************************
@@ -292,7 +307,7 @@ public class Jugador {
                     viaLibre = false;
                     y = obs.getY() + obs.getAlto();
                 }
-            }
+            }            
         }
         if (viaLibre) { y -= (pasos * velocidad); }
         return viaLibre;
@@ -382,6 +397,7 @@ public class Jugador {
      * @author Diego Carvajal
      */
     private void animacion() {
+        
         boolean movimientoI = false; // si se está moviendo esto será true
         boolean movimientoD = false;
         
@@ -491,6 +507,18 @@ public class Jugador {
     public void setImagen(Image imagen) {
         this.imagen = imagen;
     }
+    
+    
+    public void Graffitear(ArrayList<Pared> paredes){
+        
+        for(Pared pared: paredes){
+            if((pared.getX()+pared.getAncho()-10>=this.x+this.ancho && pared.getX()+10<=this.x)  && Teclado.isVANDALIZAR()){//Se puede generalizar para todo obstáculo que tenga encima la pared
+                Image imagen=new Image("Nucleo/Recursos/Paredmodificada.png");
+                pared.setImagen(imagen);
+            }
+        }
+    }
+    
 
     
     

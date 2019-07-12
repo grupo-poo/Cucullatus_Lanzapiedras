@@ -13,6 +13,7 @@ public class Teclado {
     private static boolean DERECHA;
     private static boolean IZQUIERDA;
     private static boolean PAUSA;
+    private static boolean VANDALIZAR;
 
     public static void keyPressed(KeyCode tecla) {
         
@@ -27,6 +28,12 @@ public class Teclado {
         }else if(tecla == KeyCode.P){
             PAUSA = true;
         }
+        if (tecla== KeyCode.SPACE){
+            VANDALIZAR=true;
+        }
+        else{
+            VANDALIZAR=false;
+        }
     }
 
     public static void keyReleased(KeyCode tecla) {
@@ -40,6 +47,14 @@ public class Teclado {
         }else if (tecla == KeyCode.LEFT) {
             IZQUIERDA = false;
         }
+        if (tecla== KeyCode.SPACE){
+            VANDALIZAR=false;
+        }
+        else{
+            VANDALIZAR=false;
+        }
+        
+        
     }
 
     public static boolean isARRIBA() {
@@ -81,5 +96,13 @@ public class Teclado {
     public static void setPAUSA(boolean PAUSA) {
         Teclado.PAUSA = PAUSA;
     }
+    public static boolean isVANDALIZAR() {
+        return VANDALIZAR;
+    }
+
+    public static void setVANDALIZAR(boolean VANDALIZAR) {
+        Teclado.VANDALIZAR = VANDALIZAR;
+    }
+    
     
 }
