@@ -12,8 +12,9 @@ public class Teclado {
     private static boolean ABAJO;
     private static boolean DERECHA;
     private static boolean IZQUIERDA;
-    private static boolean PAUSA;
     private static boolean VANDALIZAR;
+    private static boolean PAUSA;
+    private static boolean RECOGERPIEDRA;
 
     public static void keyPressed(KeyCode tecla) {
         
@@ -33,6 +34,12 @@ public class Teclado {
         }
         else{
             VANDALIZAR=false;
+        }
+        if(tecla==KeyCode.R){
+            RECOGERPIEDRA = true;
+        }
+        else{
+            RECOGERPIEDRA=false;
         }
     }
 
@@ -54,6 +61,12 @@ public class Teclado {
             VANDALIZAR=false;
         }
         
+        if(tecla==KeyCode.R){
+            RECOGERPIEDRA = false;
+        }
+        else{
+            RECOGERPIEDRA=false;
+        }
         
     }
 
@@ -76,6 +89,14 @@ public class Teclado {
     public static boolean isDERECHA() {
         return DERECHA;
     }
+    
+    public static boolean isPAUSA() {
+        return PAUSA;
+    }
+
+    public static void setPAUSA(boolean PAUSA) {
+        Teclado.PAUSA = PAUSA;
+    }
 
     public static void setDERECHA(boolean DERECHA) {
         Teclado.DERECHA = DERECHA;
@@ -89,19 +110,20 @@ public class Teclado {
         Teclado.IZQUIERDA = IZQUIERDA;
     }
 
-    public static boolean isPAUSA() {
-        return PAUSA;
-    }
-
-    public static void setPAUSA(boolean PAUSA) {
-        Teclado.PAUSA = PAUSA;
-    }
     public static boolean isVANDALIZAR() {
         return VANDALIZAR;
     }
 
     public static void setVANDALIZAR(boolean VANDALIZAR) {
         Teclado.VANDALIZAR = VANDALIZAR;
+    }
+
+    public static boolean isRECOGERPIEDRA() {
+        return RECOGERPIEDRA;
+    }
+
+    public static void setRECOGERPIEDRA(boolean RECOGERPIEDRA) {
+        Teclado.RECOGERPIEDRA = RECOGERPIEDRA;
     }
     
     

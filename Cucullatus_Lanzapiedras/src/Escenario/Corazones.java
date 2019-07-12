@@ -19,8 +19,11 @@ public class Corazones {
     private static int X;
     private static int Y;
     private static Image Imagen;
-    private static int cuenta=0;
+    
   
+    
+    
+    
     
     public static void dibujar(GraphicsContext lapiz, int vida){
         
@@ -30,10 +33,13 @@ public class Corazones {
         
     }
     
+    
     public static void Setall(int x, int y){
-        X = x;
-        Y = y;
+     X=x;
+     Y=y;
      }
+    
+    
 
     public static int getAltura() {
         return Altura;
@@ -74,5 +80,7 @@ public class Corazones {
     public static void setImagen(Image Imagen) {
         Corazones.Imagen = Imagen;
     }
+    
+   
     
 }

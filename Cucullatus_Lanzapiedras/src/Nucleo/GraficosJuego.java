@@ -3,12 +3,16 @@ package Nucleo;
 import Escenario.Corazones;
 import Escenario.ObjetoInerte;
 import Escenario.Pared;
+import Escenario.Piedra;
+import Personajes.Enemigo;
 import Personajes.Jugador;
 import java.io.IOException;
 import java.util.ArrayList;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 
 
 /**
@@ -27,6 +31,8 @@ public class GraficosJuego extends Canvas {
     private ObjetoInerte obstaculo1_DePrueba;
     private ObjetoInerte obstaculo2_DePrueba;
     private int cuenta=0;
+    private Enemigo enemigo1;
+    private ArrayList<Piedra> piedras;
    
     
     private ArrayList<Pared> paredes;
@@ -41,6 +47,7 @@ public class GraficosJuego extends Canvas {
         this.altoPantalla = (int) altoPantalla;
         this.anchoPantalla = (int) anchoPantalla;
         paredes= new ArrayList<>();
+        piedras=new ArrayList<>();
         inicializar();
         
     }
@@ -80,10 +87,14 @@ public class GraficosJuego extends Canvas {
      */
     private void cargarEscenarioDePrueba() throws IOException {
         // Se cargan la imagen del fondo
-        Corazones.Setall(50,50);
+        Corazones.Setall(anchoPantalla/5,altoPantalla/500);
         
         Image imagen = new Image("Nucleo/Recursos/fondo.png");
         Image pared = new Image("Nucleo/Recursos/Pared.png");
+        
+        //Enemigo
+        enemigo1=new Enemigo(2000,500,20,150,150);
+        
         
         // Se crea el fondo y se le añade la imagen 
         fondoDePrueba = new ObjetoInerte(imagen);
@@ -120,19 +131,26 @@ public class GraficosJuego extends Canvas {
          * 4, 5, 6, 7... y muchas otras pero me da flojera harcerlas todas.
          * Ah, y el orden no importa.
          */
+        System.out.println(this.anchoPantalla + " "+ this.altoPantalla);
         suelo1_DePrueba = new ObjetoInerte(imagen);
         suelo1_DePrueba.setDimensiones(this.anchoPantalla/3, this.altoPantalla/9);
         suelo1_DePrueba.setX(0);
         suelo1_DePrueba.setY(altoPantalla - suelo1_DePrueba.getAlto());
         
+        //Piedra
+        
+        AñadirPiedra(suelo1_DePrueba.getX()+400,suelo1_DePrueba.getY()-30,40,30);
+        AñadirPiedra(suelo1_DePrueba.getX()+300,suelo1_DePrueba.getY()-30,40,30);
         //Pared
         
         this.añadirPared(pared,suelo1_DePrueba.getX()+160,suelo1_DePrueba.getY()-90, 90,90);
         // 
         suelo2_DePrueba = new ObjetoInerte(imagen);
         suelo2_DePrueba.setCoordenadas(suelo1_DePrueba.getX()+suelo1_DePrueba.getAncho()+200, suelo1_DePrueba.getY());
-        suelo2_DePrueba.setAncho(600);
+        Rectangle2D dim = Screen.getPrimary().getBounds();
+        suelo2_DePrueba.setAncho((int) dim.getWidth()-suelo2_DePrueba.getX());
         suelo2_DePrueba.setAlto(100);
+        suelo2_DePrueba.setAlargamiento(true);
         
         obstaculo1_DePrueba = new ObjetoInerte(imagen);
         obstaculo1_DePrueba.setAncho(150);
@@ -158,6 +176,11 @@ public class GraficosJuego extends Canvas {
         for(int i=0; i<paredes.size();i++){
             paredes.get(i).dibujar(lapiz);
         }
+        for(int i=0; i<piedras.size();i++){
+            piedras.get(i).dibujar(lapiz);
+        }
+        
+        
         mensajeDePrueba.dibujar(lapiz);
         ObjetoFlotanteDePrueba1.dibujar(lapiz);
         ObjetoFlotanteDePrueba2.dibujar(lapiz);
@@ -167,6 +190,7 @@ public class GraficosJuego extends Canvas {
         obstaculo2_DePrueba.dibujar(lapiz);
         jugador.dibujar(lapiz);
         Corazones.dibujar(lapiz, jugador.getVida());
+        enemigo1.dibujar(lapiz,jugador);
         
         if(cuenta<=10){
                 if(cuenta == 10) {
@@ -210,6 +234,8 @@ public class GraficosJuego extends Canvas {
         obstaculo1_DePrueba.actualizar(jugador);
         obstaculo2_DePrueba.actualizar(jugador);
         jugador.Graffitear(paredes);
+        jugador.RecogerPiedra(piedras);
+        enemigo1.actualizar(jugador);
         
         for(int i=0; i<paredes.size();i++){
             paredes.get(i).actualizar(jugador);
@@ -241,6 +267,10 @@ public class GraficosJuego extends Canvas {
     public void añadirPared(Image imagen, int x, int y, int ancho, int alto){
         Pared pared=new Pared(imagen, x, y, ancho, alto);
         paredes.add(pared);
+    }
+    
+    public void AñadirPiedra(int x, int y, int ancho, int alto){
+        piedras.add(new Piedra(x, y, ancho, alto));
     }
     
 }

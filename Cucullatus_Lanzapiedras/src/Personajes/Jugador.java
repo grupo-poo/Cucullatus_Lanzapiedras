@@ -3,12 +3,12 @@ package Personajes;
 import Control.Teclado;
 import Escenario.ObjetoInerte;
 import Escenario.Pared;
+import Escenario.Piedra;
 import Nucleo.Debug;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 
 /**
  * Todas las mecanicas del Jugador se establecen aquí.
@@ -23,9 +23,8 @@ public class Jugador {
     private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
     private Image imagen;
-    private int vida;
-    
-    private int graf; //Total de grafitis en el bolsillo
+    private int vida=10;//Vida inicial del jugador
+    private int piedras=0; //Cantidad de piedras del jugador
     
     // Auxiliares para la gravedad.
     private boolean salto = false; // si es true se puede realizar un salto.
@@ -44,15 +43,6 @@ public class Jugador {
         desplazamiento = x;
         pasos = 3;
         velocidadVertical = 1;
-        vida=10;
-    }
-
-    public int getVida() {
-        return vida;
-    }
-
-    public void setVida(int vida) {
-        this.vida = vida;
     }
     
     /**
@@ -131,8 +121,7 @@ public class Jugador {
             if (estaTocandoSuelo) {
                salto = true;
             }
-        
-        }       
+        }
         saltar(obstaculos);
         velocidadHorizontal = desplazamiento - velocidadHorizontal;
     }
@@ -390,9 +379,7 @@ public class Jugador {
         return !(Jugador.getBoundsInLocal().getMaxX() == obstaculo.getBoundsInLocal().getMinX()
                 || Jugador.getBoundsInLocal().getMinX() == obstaculo.getBoundsInLocal().getMaxX());
     }
-    private void cerrar(Stage ventana){
-        ventana.close();
-    }
+    
     /**
      * @author Diego Carvajal
      */
@@ -520,6 +507,25 @@ public class Jugador {
     }
     
 
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
     
+    public void RecogerPiedra(ArrayList<Piedra> piedras){
+        for(Piedra piedra: piedras){
+            if((piedra.getAncho()+piedra.getX()-20<this.ancho+this.x && piedra.getX()-20<this.x && piedra.isVisible())){
+                this.piedras+=1;
+                piedra.setVisible(false);
+            }
+        }
+    }
     
 }
+   
+
+    
+    

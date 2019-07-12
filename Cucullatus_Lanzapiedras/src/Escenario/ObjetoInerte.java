@@ -14,6 +14,7 @@ public class ObjetoInerte {
     private int x, y; // Coordenadas del Objeto en la pantalla.
     private int xInit; // Coordemada x inicial (no cambia)
     private Image imagen;
+    private boolean Alargamiento;
     
     public ObjetoInerte(Image imagen) {
         this.imagen = imagen;
@@ -66,8 +67,11 @@ public class ObjetoInerte {
      * @param jugador 
      */
     public void actualizar(Jugador jugador) {
+        
         if (jugador.isDistanciaCritica()) {
             x -= jugador.getVelocidadHorizontal();
+            if(Alargamiento)
+            ancho+=jugador.getVelocidadHorizontal();
         }
     }
     
@@ -130,6 +134,17 @@ public class ObjetoInerte {
     public void setImagen(Image imagen) {
         this.imagen = imagen;
     }
+
+    public boolean isAlargamiento() {
+        return Alargamiento;
+    }
+
+    public void setAlargamiento(boolean Alargamiento) {
+        this.Alargamiento = Alargamiento;
+    }
+    
+    
+   
     
     
     
