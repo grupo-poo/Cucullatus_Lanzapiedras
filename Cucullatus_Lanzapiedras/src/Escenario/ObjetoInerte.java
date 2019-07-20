@@ -1,6 +1,7 @@
 package Escenario;
 
 import Personajes.Jugador;
+import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
@@ -15,6 +16,7 @@ public class ObjetoInerte {
     private int xInit; // Coordemada x inicial (no cambia)
     private Image imagen;
     private boolean Alargamiento;
+    private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     
     public ObjetoInerte(Image imagen) {
         this.imagen = imagen;
@@ -24,9 +26,10 @@ public class ObjetoInerte {
     
     public ObjetoInerte(Image imagen, int x, int y) {
         this.imagen = imagen;
-        ancho = (int) imagen.getWidth();
-        alto = (int) imagen.getHeight();
+        this.ancho = (int) imagen.getWidth();
+        this.alto = (int) imagen.getHeight();
         this.x = x;
+        this.desplazamiento = x;
         this.xInit = x;
         this.y = y;
     }
@@ -34,6 +37,7 @@ public class ObjetoInerte {
     public ObjetoInerte(Image imagen, int x, int y, int ancho, int alto) {
         this.imagen = imagen;
         this.x = x;
+        this.desplazamiento = x;
         this.xInit = x;
         this.y = y;
         this.ancho = ancho;
@@ -66,13 +70,53 @@ public class ObjetoInerte {
      * 
      * @param jugador 
      */
-    public void actualizar(Jugador jugador) {
-        
+    public void actualizar(Jugador jugador) {        
         if (jugador.isDistanciaCritica()) {
             x -= jugador.getVelocidadHorizontal();
             if(Alargamiento)
             ancho+=jugador.getVelocidadHorizontal();
         }
+    }
+    
+    private boolean desplazarseAbajo(ArrayList<ObjetoInerte> obstaculos) {
+        int fuerza = 6;
+        boolean viaLibre = true;
+        Rectangle Clon = getRectangulo();
+        Clon.setY(y + fuerza);
+        for (ObjetoInerte obs : obstaculos) {
+            if (Clon.intersects(obs.getRectangulo().getBoundsInLocal())) {
+                if (ObstaculoDirVertical(Clon, obs.getRectangulo())) {
+                    viaLibre = false;
+                    y = obs.getY() - alto;
+                }
+            }
+        }
+        if (viaLibre) { y += fuerza; }
+        return viaLibre;
+    }
+    
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * @param clon rectangulo con las dimensiones del jugador
+     * @param obstaculo rectangulo con las dimensiones del obstaculo con el que colisiona.
+     * @return true si la colision con un obstaculo es por la derecha o por la izquierda.
+     * @author Milton Lenis
+     */
+    private boolean ObstaculoDirHorizontal(Rectangle clon, Rectangle obstaculo) {
+        return !(clon.getBoundsInLocal().getMinY() == obstaculo.getBoundsInLocal().getMaxY()
+                || clon.getBoundsInLocal().getMaxY() == obstaculo.getBoundsInLocal().getMinY());
+    }
+    
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * @param clon rectangulo con las dimensiones del jugador
+     * @param obstaculo rectangulo con las dimensiones del obstaculo con el que colisiona.
+     * @return true si la colision con un obstaculo es por la derecha o por la izquierda.
+     * @author Milton Lenis
+     */
+    private boolean ObstaculoDirVertical(Rectangle clon, Rectangle obstaculo) {
+        return !(clon.getBoundsInLocal().getMaxX() == obstaculo.getBoundsInLocal().getMinX()
+                || clon.getBoundsInLocal().getMinX() == obstaculo.getBoundsInLocal().getMaxX());
     }
     
     public Rectangle getRectangulo() {

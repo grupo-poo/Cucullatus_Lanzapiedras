@@ -15,6 +15,9 @@ public class Teclado {
     private static boolean VANDALIZAR;
     private static boolean PAUSA;
     private static boolean RECOGERPIEDRA;
+    private static boolean LANZARFRONTAL;
+    private static boolean LANZARARRIBA;
+    private static boolean LANZARABAJO;
 
     public static void keyPressed(KeyCode tecla) {
         
@@ -26,20 +29,18 @@ public class Teclado {
             DERECHA = true;
         }else if (tecla == KeyCode.LEFT) {
             IZQUIERDA = true;
-        }else if(tecla == KeyCode.P){
+        }else if(tecla == KeyCode.P) {
             PAUSA = true;
-        }
-        if (tecla== KeyCode.SPACE){
+        }else if (tecla == KeyCode.SPACE) {
             VANDALIZAR=true;
-        }
-        else{
-            VANDALIZAR=false;
-        }
-        if(tecla==KeyCode.R){
+        }else if(tecla == KeyCode.R) {
             RECOGERPIEDRA = true;
-        }
-        else{
-            RECOGERPIEDRA=false;
+        }else if(tecla == KeyCode.E) {
+            LANZARFRONTAL = true;
+        }else if(tecla == KeyCode.W) {
+            LANZARARRIBA = true;
+        }else if(tecla == KeyCode.S) {
+            LANZARABAJO = true;
         }
     }
 
@@ -53,19 +54,16 @@ public class Teclado {
             DERECHA = false;
         }else if (tecla == KeyCode.LEFT) {
             IZQUIERDA = false;
-        }
-        if (tecla== KeyCode.SPACE){
+        }else if (tecla== KeyCode.SPACE){
             VANDALIZAR=false;
-        }
-        else{
-            VANDALIZAR=false;
-        }
-        
-        if(tecla==KeyCode.R){
+        }else if(tecla==KeyCode.R){
             RECOGERPIEDRA = false;
-        }
-        else{
-            RECOGERPIEDRA=false;
+        }else if(tecla == KeyCode.E) {
+            LANZARFRONTAL = false;
+        }else if(tecla == KeyCode.W) {
+            LANZARARRIBA = false;
+        }else if(tecla == KeyCode.S) {
+            LANZARABAJO = false;
         }
         
     }
@@ -125,6 +123,29 @@ public class Teclado {
     public static void setRECOGERPIEDRA(boolean RECOGERPIEDRA) {
         Teclado.RECOGERPIEDRA = RECOGERPIEDRA;
     }
-    
+
+    public static boolean isLANZARFRONTAL() {
+        return LANZARFRONTAL;
+    }
+
+    public static void setLANZARFRONTAL(boolean LANZARFRONTAL) {
+        Teclado.LANZARFRONTAL = LANZARFRONTAL;
+    }
+
+    public static boolean isLANZARARRIBA() {
+        return LANZARARRIBA;
+    }
+
+    public static void setLANZARARRIBA(boolean LANZARARRIBA) {
+        Teclado.LANZARARRIBA = LANZARARRIBA;
+    }
+
+    public static boolean isLANZARABAJO() {
+        return LANZARABAJO;
+    }
+
+    public static void setLANZARABAJO(boolean LANZARABAJO) {
+        Teclado.LANZARABAJO = LANZARABAJO;
+    }
     
 }
