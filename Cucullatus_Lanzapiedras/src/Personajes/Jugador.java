@@ -27,6 +27,7 @@ public class Jugador {
     private int piedras=0; //Cantidad de piedras del jugador
     private Piedra piedra;
     private boolean direccion; // Si es true el jugador mira a la derecha.
+    private boolean muerto;
     
     // Auxiliares para la gravedad.
     private int countAuxForGravity = 0; // Contador auxiliar para la gravedad.
@@ -45,15 +46,16 @@ public class Jugador {
     
     public Jugador(Image imagen) {
         this.imagen = imagen;
+        x = 40;
+        y = 150;
+        desplazamiento = x;
         ancho = (int) imagen.getWidth();
         alto  = (int) imagen.getHeight();
-        x = 40;     y = 55;
-        desplazamiento = x;
         pasos = 3;
         velocidadVertical = 1;
         direccion = true;
+        muerto = false;
     }
-    
     
     /**
      * *************************** METODO ALTERABLE ***************************
@@ -85,9 +87,13 @@ public class Jugador {
      * @param obstaculos 
      */
     public void actualizar(int anchoDePantalla, int altoDePantalla, ArrayList<ObjetoInerte> obstaculos) {
-        // Cuando el jugador esté en un cierto punto el escenario se mueve.
-        determinarDistanciaCritica(anchoDePantalla);
+        velocidadHorizontal = desplazamiento;
+        int distCrit = determinarDistanciaCritica(anchoDePantalla);
         mover(obstaculos); // Aquí movemos al jugador.
+        morir(altoDePantalla);
+        boolean SobrepasadoDistCrit = respawn1(altoDePantalla, distCrit);
+        velocidadHorizontal = desplazamiento - velocidadHorizontal;
+        respawn2(SobrepasadoDistCrit);
         animacion(); // Aquí se ejecuta la animación del jugador.
         lanzarPiedra(obstaculos);
         eliminarPiedraSiSaleDeEscenario(anchoDePantalla, altoDePantalla);
@@ -104,6 +110,16 @@ public class Jugador {
         Debug.lapiz.fillText("Aceleracion: " + aceleracion, 20, 90);
         Debug.lapiz.fillText("Piedras: " + piedras, 20, 102);
         //////////////////////////////////////////
+    }
+    
+    private void morir(int altoPantalla) {
+        if (y > altoPantalla) { // irse por un precipicio
+            muerto = true;
+            vida--;
+            piedras = 0;
+            piedra = null;
+            abortarLanzamiento();
+        }
     }
     
     /**
@@ -124,7 +140,6 @@ public class Jugador {
      * @param obstaculos array de obstaculos.
      */
     private void mover(ArrayList<ObjetoInerte> obstaculos) {
-        velocidadHorizontal = desplazamiento;
         boolean estaTocandoSuelo = gravedad(obstaculos);
         
         if (Teclado.isIZQUIERDA()) {
@@ -139,9 +154,8 @@ public class Jugador {
             }
         }
         saltar(obstaculos);
-        velocidadHorizontal = desplazamiento - velocidadHorizontal;
     }
-
+    
     private void lanzarPiedra(ArrayList<ObjetoInerte> obstaculos) {
         if (piedras > 0) {
             if (Teclado.isLANZARFRONTAL()) {
@@ -168,9 +182,9 @@ public class Jugador {
                 }
             }
             desplazarPiedraDerecha(obstaculos);
-            desplazarPiedraAbajo(obstaculos);
-            desplazarPiedraArriba(obstaculos);
             desplazarPiedraIzquierda(obstaculos);
+            desplazarPiedraArriba(obstaculos);
+            desplazarPiedraAbajo(obstaculos);
         }
     }
     
@@ -227,14 +241,18 @@ public class Jugador {
     public void eliminarPiedraSiSaleDeEscenario(int anchoPantalla, int altoPantalla) {
         if (piedra != null) {
             if (isFueraDeEscenario(anchoPantalla, altoPantalla, piedra)) {
-                piedraAbajo = false;
-                piedraArriba = false;
-                piedraDerecha = false;
-                piedraIzquierda = false;
+                abortarLanzamiento();
                 piedra = null;
                 piedras--;
             }
         }
+    }
+    
+    private void abortarLanzamiento() {
+        piedraAbajo = false;
+        piedraArriba = false;
+        piedraDerecha = false;
+        piedraIzquierda = false;
     }
     
     private boolean isFueraDeEscenario(int anchoPantalla, int altoPantalla, Piedra piedra) {
@@ -465,11 +483,12 @@ public class Jugador {
      * @param anchoDePantalla
      * @author Milton Lenis
      */
-    private void determinarDistanciaCritica(int anchoDePantalla) {
+    private int determinarDistanciaCritica(int anchoDePantalla) {
         int distCrit = ((anchoDePantalla / 2) - 2*ancho);
         if (desplazamiento >= distCrit) {
             distanciaCritica = !(desplazamiento < (distCrit + pasos) && Teclado.isIZQUIERDA());
         } else distanciaCritica = false;
+        return distCrit;
     }
     
     /**
@@ -524,22 +543,75 @@ public class Jugador {
     
     public void Graffitear(ArrayList<Pared> paredes){
         for(Pared pared: paredes){
-            if((pared.getX()+pared.getAncho()-10>=this.x+this.ancho && pared.getX()+10<=this.x)  && Teclado.isVANDALIZAR()){//Se puede generalizar para todo obstáculo que tenga encima la pared
-                Image imagen=new Image("Nucleo/Recursos/Paredmodificada.png");
-                pared.setImagen(imagen);
+            if (Teclado.isVANDALIZAR()) {
+                if((pared.getX() + pared.getAncho() >= x + ancho && pared.getX() < x
+                        && pared.getY() + pared.getAlto() >= y + alto && pared.getY() <= y)){//Se puede generalizar para todo obstáculo que tenga encima la pared
+                    Image imagen = new Image("Nucleo/Recursos/Paredmodificada.png");
+                    pared.setImagen(imagen);
+                }
             }
         }
     }
     
     public void RecogerPiedra(ArrayList<Piedra> piedras){
         for(Piedra piedra: piedras){
-            if((piedra.getAncho()+piedra.getX()-20<this.ancho+this.x && piedra.getX()-20<this.x && piedra.isVisible())){
-                this.piedras++;
-                piedra.setVisible(false);
+            if (piedra.isVisible()) {
+                if (piedra.getRectangulo().intersects(this.getRectangulo().getBoundsInLocal())) {
+                    this.piedras++;
+                    piedra.setVisible(false);
+                }
             }
         }
     }
-        
+    
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - x
+     * - y
+     * - desplazamiento
+     * 
+     * Sirve para hacer respawn (el jugador regresa a la posición incial).
+     * 
+     * @param altoPantalla
+     * @param distCritica
+     * @return true si se ha superado la distancia critica y se a caido por un abismo.
+     */
+    private boolean respawn1(int altoPantalla, int distCritica){
+        boolean seHaSuperadoLaDistanciaCritica = false; 
+        if (y > altoPantalla) { // irse por un precipicio
+            if (distanciaCritica) {
+                x = distCritica;
+                seHaSuperadoLaDistanciaCritica = true;
+            } else {
+                x = 40;
+            }
+            y = 150;
+            desplazamiento = x;
+        }
+        return seHaSuperadoLaDistanciaCritica;
+    }
+    
+    /**
+     * ************************* METODO NO ALTERABLE *************************
+     * 
+     * Este metodo cambia los siguientes atributos:
+     * - x
+     * - desplazamiento
+     * 
+     * Sirve para hacer respawn (el jugador regresa a la posición incial),
+     * pero solo cuando se ha superado la distancia critica..
+     * 
+     * @param seHaSuperadoLaDistanciaCritica 
+     */
+    private void respawn2(boolean seHaSuperadoLaDistanciaCritica) {
+        if (seHaSuperadoLaDistanciaCritica) {
+            x = 40;
+            desplazamiento = x;
+        }
+    }
+     
     public Rectangle getRectangulo() {
         return new Rectangle(x, y, ancho, alto);
     }
@@ -630,6 +702,14 @@ public class Jugador {
 
     public void setVida(int vida) {
         this.vida = vida;
+    }
+
+    public boolean isMuerto() {
+        return muerto;
+    }
+
+    public void setMuerto(boolean muerto) {
+        this.muerto = muerto;
     }
     
 }

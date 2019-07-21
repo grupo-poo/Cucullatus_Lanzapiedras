@@ -22,7 +22,6 @@ public class Piedra {
     private int alto;
     private Image imagen;
     private boolean visible = true;
-    private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     
     
     public Piedra(int x, int y, int ancho, int alto){

@@ -31,9 +31,8 @@ public class GraficosJuego extends Canvas {
     private ObjetoInerte obstaculo2_DePrueba;
     private int cuenta=0;
     private Enemigo enemigo1;
-    private ArrayList<Piedra> piedras;
-   
     
+    private ArrayList<Piedra> piedras;
     private ArrayList<Pared> paredes;
     
     private final int altoPantalla;
@@ -114,11 +113,11 @@ public class GraficosJuego extends Canvas {
         suelo1_DePrueba.setDimensiones(anchoPantalla / 3, altoPantalla / 9);
         
         //Piedra
-        AñadirPiedra(suelo1_DePrueba.getX() + 400, suelo1_DePrueba.getY() - 30, 40, 30);
-        AñadirPiedra(suelo1_DePrueba.getX() + 300, suelo1_DePrueba.getY() - 30, 40, 30);
+        añadirPiedra(suelo1_DePrueba.getX() + 400, suelo1_DePrueba.getY() - 30, 40, 30);
+        añadirPiedra(suelo1_DePrueba.getX() + 300, suelo1_DePrueba.getY() - 30, 40, 30);
         
         //Pared
-        this.añadirPared(pared,suelo1_DePrueba.getX() + 160, suelo1_DePrueba.getY() - 90, 90,90);
+        añadirPared(pared,suelo1_DePrueba.getX() + 160, suelo1_DePrueba.getY() - 90, 90,90);
         // 
         suelo2_DePrueba = new ObjetoInerte(imagen);
         suelo2_DePrueba.setX(suelo1_DePrueba.getX() + suelo1_DePrueba.getAncho() + 200);
@@ -143,13 +142,13 @@ public class GraficosJuego extends Canvas {
     private void dibujar(GraphicsContext lapiz) {
 
         fondoDePrueba.dibujar(lapiz);
+        Corazones.dibujar(lapiz, jugador.getVida());
         for (Pared pared : paredes) {
             pared.dibujar(lapiz);
         }
         for (Piedra piedra : piedras) {
             piedra.dibujar(lapiz);
         }
-        
         mensajeDePrueba.dibujar(lapiz);
         mensaje2DePrueba.dibujar(lapiz);
         ObjetoFlotanteDePrueba1.dibujar(lapiz);
@@ -158,29 +157,22 @@ public class GraficosJuego extends Canvas {
         suelo2_DePrueba.dibujar(lapiz);
         obstaculo1_DePrueba.dibujar(lapiz);
         obstaculo2_DePrueba.dibujar(lapiz);
-        jugador.dibujar(lapiz);
-        Corazones.dibujar(lapiz, jugador.getVida());
         enemigo1.dibujar(lapiz,jugador);
-        
-        if(cuenta == 10) {
-            cuenta = 0;
-            if(jugador.getVida() == 10) jugador.setVida(0);
-            else jugador.setVida(jugador.getVida()+1); 
-         }
-        else cuenta++;
+        jugador.dibujar(lapiz);
         
         //////////////////////////////////////////
         /**
          * Todo esto puede ser eliminado, solo sirve para depurar.
          */
         new Debug(lapiz);
+        Debug.lapiz.fillText("fondo: " + fondoDePrueba.getX(), 20, 114);
         //////////////////////////////////////////
     }
     
     /**
      * *************************** METODO ALTERABLE ***************************
      */
-    private void actualizar(){
+    private void actualizar() throws IOException{
         // Agregamos los obstaculos a una colección
         ArrayList<ObjetoInerte> obstaculos = new ArrayList<ObjetoInerte>();
         obstaculos.add(suelo1_DePrueba);
@@ -190,6 +182,12 @@ public class GraficosJuego extends Canvas {
         obstaculos.add(ObjetoFlotanteDePrueba1);
         obstaculos.add(ObjetoFlotanteDePrueba2);
         
+        for (Pared pared : paredes) {
+            pared.actualizar(jugador);
+        }
+        for (Piedra piedra : piedras) {
+            piedra.actualizar(jugador);
+        }
         jugador.actualizar(anchoPantalla, altoPantalla, obstaculos);
         fondoDePrueba.actualizar(jugador);
         mensajeDePrueba.actualizar(jugador);
@@ -203,15 +201,21 @@ public class GraficosJuego extends Canvas {
         jugador.Graffitear(paredes);
         jugador.RecogerPiedra(piedras);
         enemigo1.actualizar(jugador);
-        for (Pared pared : paredes) {
-            pared.actualizar(jugador);
+        if (jugador.isMuerto()) {
+            for (Piedra piedra : piedras) {
+                piedra.setVisible(true);
+                jugador.setMuerto(false);
+            }
+            if (jugador.getVida() == 0) {
+                ejecutandose = false;
+            }
         }
     }
     
     /**
      * *************************** METODO ALTERABLE ***************************
      */
-    public void repintar() {
+    public void repintar() throws IOException {
         GraphicsContext lapiz = this.getGraphicsContext2D();
         lapiz.clearRect(0, 0, anchoPantalla, altoPantalla);
         dibujar(lapiz);
@@ -229,11 +233,10 @@ public class GraficosJuego extends Canvas {
     }
     
     public void añadirPared(Image imagen, int x, int y, int ancho, int alto){
-        Pared pared=new Pared(imagen, x, y, ancho, alto);
-        paredes.add(pared);
+        paredes.add(new Pared(imagen, x, y, ancho, alto));
     }
     
-    public void AñadirPiedra(int x, int y, int ancho, int alto){
+    public void añadirPiedra(int x, int y, int ancho, int alto){
         piedras.add(new Piedra(x, y, ancho, alto));
     }
     

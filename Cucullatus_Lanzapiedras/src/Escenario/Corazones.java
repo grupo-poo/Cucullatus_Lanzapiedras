@@ -9,7 +9,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 /**
- *
  * @author diegocarvajal
  */
 public class Corazones {
@@ -19,11 +18,6 @@ public class Corazones {
     private static int X;
     private static int Y;
     private static Image Imagen;
-    
-  
-    
-    
-    
     
     public static void dibujar(GraphicsContext lapiz, int vida){
         
@@ -35,10 +29,9 @@ public class Corazones {
     
     
     public static void Setall(int x, int y){
-     X=x;
-     Y=y;
+        X = x;
+        Y = y;
      }
-    
     
 
     public static int getAltura() {

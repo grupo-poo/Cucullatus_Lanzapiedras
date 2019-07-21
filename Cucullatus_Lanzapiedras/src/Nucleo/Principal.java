@@ -1,6 +1,9 @@
 package Nucleo;
 
 import Control.Teclado;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -56,7 +59,15 @@ public class Principal extends Application {
         AnimationTimer animacion = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                juego.repintar();
+                try {
+                    if (!juego.isEjecutandose()) {
+                        stop();
+                        ventana.close();
+                    }
+                    juego.repintar();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         };
         animacion.start();
