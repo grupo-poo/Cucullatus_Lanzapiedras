@@ -5,6 +5,7 @@
  */
 package Escenario;
 
+import Nucleo.ObjetoEscenario;
 import Personajes.Jugador;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,7 +16,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author diegocarvajal
  */
-public class Piedra {
+public class Piedra extends ObjetoEscenario{
     private int x;
     private int y;
     private int ancho;
@@ -50,11 +51,10 @@ public class Piedra {
         }
     }
     
-    public boolean desplazarseDerecha(ArrayList<ObjetoInerte> obstaculos) {
-        int fuerza = 9;
+    public boolean desplazarseDerecha(ArrayList<ObjetoInerte> obstaculos , int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
-        Clon.setX(x + fuerza);
+        Clon.setX(x + velocidad);
         for (ObjetoInerte obs : obstaculos) {
             if (Clon.intersects(obs.getRectangulo().getBoundsInLocal())) {
                 if (ObstaculoDirHorizontal(Clon, obs.getRectangulo())) {
@@ -63,15 +63,14 @@ public class Piedra {
                 }
             }
         }
-        if (viaLibre) { x += fuerza; }
+        if (viaLibre) { x += velocidad; }
         return viaLibre;
     }
     
-    public boolean desplazarseIzquierda(ArrayList<ObjetoInerte> obstaculos) {
-        int fuerza = 9;
+    public boolean desplazarseIzquierda(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
-        Clon.setX(x - fuerza);
+        Clon.setX(x - velocidad);
         for (ObjetoInerte obs : obstaculos) {
             if (Clon.intersects(obs.getRectangulo().getBoundsInLocal())) {
                 if (ObstaculoDirHorizontal(Clon, obs.getRectangulo())) {
@@ -80,15 +79,14 @@ public class Piedra {
                 }
             }
         }
-        if (viaLibre) { x -= fuerza; }
+        if (viaLibre) { x -= velocidad; }
         return viaLibre;
     }
     
-    public boolean desplazarseArriba(ArrayList<ObjetoInerte> obstaculos) {
-        int fuerza = 9;
+    public boolean desplazarseArriba(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
-        Clon.setY(y - fuerza);
+        Clon.setY(y - velocidad);
         for (ObjetoInerte obs : obstaculos) {
             if (Clon.intersects(obs.getRectangulo().getBoundsInLocal())) {
                 if (ObstaculoDirVertical(Clon, obs.getRectangulo())) {
@@ -97,15 +95,14 @@ public class Piedra {
                 }
             }
         }
-        if (viaLibre) { y -= fuerza; }
+        if (viaLibre) { y -= velocidad; }
         return viaLibre;
     }
     
-    public boolean desplazarseAbajo(ArrayList<ObjetoInerte> obstaculos) {
-        int fuerza = 9;
+    public boolean desplazarseAbajo(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
-        Clon.setY(y + fuerza);
+        Clon.setY(y + velocidad);
         for (ObjetoInerte obs : obstaculos) {
             if (Clon.intersects(obs.getRectangulo().getBoundsInLocal())) {
                 if (ObstaculoDirVertical(Clon, obs.getRectangulo())) {
@@ -114,7 +111,7 @@ public class Piedra {
                 }
             }
         }
-        if (viaLibre) { y += fuerza; }
+        if (viaLibre) { y += velocidad; }
         return viaLibre;
     }
     
@@ -142,6 +139,7 @@ public class Piedra {
                 || clon.getBoundsInLocal().getMinX() == obstaculo.getBoundsInLocal().getMaxX());
     }
     
+    @Override
     public Rectangle getRectangulo() {
         return new Rectangle(x, y, ancho, alto);
     }

@@ -5,6 +5,7 @@ import Escenario.ObjetoInerte;
 import Escenario.Pared;
 import Escenario.Piedra;
 import Nucleo.Debug;
+import Nucleo.ObjetoEscenario;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -13,8 +14,10 @@ import javafx.scene.shape.Rectangle;
 /**
  * Todas las mecanicas del Jugador se establecen aquí.
  */
-public class Jugador {
+public class Jugador extends ObjetoEscenario{
     
+    private final int altoPantalla;
+    private final int anchoPantalla;
     private byte pasos;   // Número de pixeles que debe recorrer por frame.
     private int velocidadHorizontal; // pixeles que recorre horizontalmente en tiempo real.
     private int velocidadVertical; // pixeles que recorre verticalmente en tiempo real.
@@ -44,7 +47,9 @@ public class Jugador {
     private boolean piedraAbajo = false;
   
     
-    public Jugador(Image imagen) {
+    public Jugador(Image imagen, int anchoPantalla, int altoPantalla) {
+        this.altoPantalla = altoPantalla;
+        this.anchoPantalla = anchoPantalla;
         this.imagen = imagen;
         x = 40;
         y = 150;
@@ -86,17 +91,18 @@ public class Jugador {
      * @param anchoDePantalla
      * @param obstaculos 
      */
-    public void actualizar(int anchoDePantalla, int altoDePantalla, ArrayList<ObjetoInerte> obstaculos) {
+    public void actualizar(ArrayList<ObjetoInerte> obstaculos, ArrayList<Enemigo> enemigos) {
         velocidadHorizontal = desplazamiento;
-        int distCrit = determinarDistanciaCritica(anchoDePantalla);
+        int distCrit = determinarDistanciaCritica();
         mover(obstaculos); // Aquí movemos al jugador.
-        morir(altoDePantalla);
-        boolean SobrepasadoDistCrit = respawn1(altoDePantalla, distCrit);
+        morir(enemigos);
+        boolean SobrepasadoDistCrit = respawn1(distCrit);
         velocidadHorizontal = desplazamiento - velocidadHorizontal;
         respawn2(SobrepasadoDistCrit);
         animacion(); // Aquí se ejecuta la animación del jugador.
         lanzarPiedra(obstaculos);
-        eliminarPiedraSiSaleDeEscenario(anchoDePantalla, altoDePantalla);
+        eliminarPiedraSiSaleDeEscenario();
+        abatirEnemigo(enemigos);
 
         //////////////////////////////////////////
         /**
@@ -112,14 +118,45 @@ public class Jugador {
         //////////////////////////////////////////
     }
     
-    private void morir(int altoPantalla) {
-        if (y > altoPantalla) { // irse por un precipicio
+    private void morir(ArrayList<Enemigo> enemigos) {
+        if (y > altoPantalla || intersectsEnemigo(enemigos)) { // irse por un precipicio
             muerto = true;
             vida--;
             piedras = 0;
             piedra = null;
             abortarLanzamiento();
+            revivirEnemigo(enemigos);
         }
+    }
+    
+    private void abatirEnemigo(ArrayList<Enemigo> enemigos) {
+        if (piedra != null) {
+            for (Enemigo enemigo : enemigos) {
+                if (enemigo.getRectangulo().intersects(piedra.getRectangulo().getBoundsInLocal())) {
+                    enemigo.setMuerto(true);
+                    piedra = null;
+                    abortarLanzamiento();
+                }
+            }
+        }
+    }
+    
+    private void revivirEnemigo(ArrayList<Enemigo> enemigos) {
+        for (Enemigo enemigo : enemigos) {
+            enemigo.setMuerto(false);
+        }
+    }
+    
+    private boolean intersectsEnemigo(ArrayList<Enemigo> enemigos) {
+        boolean hayIntercepcion = false;
+        for (Enemigo enemigo : enemigos) {
+            if (!enemigo.isMuerto()) {
+                if (enemigo.getRectangulo().intersects(this.getRectangulo().getBoundsInLocal())) {
+                    hayIntercepcion = true;
+                }
+            }
+        }
+        return hayIntercepcion;
     }
     
     /**
@@ -197,7 +234,7 @@ public class Jugador {
     private void desplazarPiedraDerecha(ArrayList<ObjetoInerte> obstaculos) {
         if (piedraDerecha) {
             piedra.actualizar(this);
-            if (!piedra.desplazarseDerecha(obstaculos)) {
+            if (!piedra.desplazarseDerecha(obstaculos, 9)) {
                 piedraDerecha = false;
                 piedra = null;
                 piedras--;
@@ -208,7 +245,7 @@ public class Jugador {
     private void desplazarPiedraIzquierda(ArrayList<ObjetoInerte> obstaculos) {
         if (piedraIzquierda) {
             piedra.actualizar(this);
-            if (!piedra.desplazarseIzquierda(obstaculos)) {
+            if (!piedra.desplazarseIzquierda(obstaculos, 9)) {
                 piedraIzquierda = false;
                 piedra = null;
                 piedras--;
@@ -219,7 +256,7 @@ public class Jugador {
     private void desplazarPiedraArriba(ArrayList<ObjetoInerte> obstaculos) {
         if (piedraArriba) {
             piedra.actualizar(this);
-            if (!piedra.desplazarseArriba(obstaculos)) {
+            if (!piedra.desplazarseArriba(obstaculos, 9)) {
                 piedraArriba = false;
                 piedra = null;
                 piedras--;
@@ -230,7 +267,7 @@ public class Jugador {
     private void desplazarPiedraAbajo(ArrayList<ObjetoInerte> obstaculos) {
         if (piedraAbajo) {
             piedra.actualizar(this);
-            if (!piedra.desplazarseAbajo(obstaculos)) {
+            if (!piedra.desplazarseAbajo(obstaculos, 9)) {
                 piedraAbajo = false;
                 piedra = null;
                 piedras--;
@@ -238,9 +275,9 @@ public class Jugador {
         }
     }
     
-    public void eliminarPiedraSiSaleDeEscenario(int anchoPantalla, int altoPantalla) {
+    public void eliminarPiedraSiSaleDeEscenario() {
         if (piedra != null) {
-            if (isFueraDeEscenario(anchoPantalla, altoPantalla, piedra)) {
+            if (isFueraDeEscenario(piedra)) {
                 abortarLanzamiento();
                 piedra = null;
                 piedras--;
@@ -255,7 +292,7 @@ public class Jugador {
         piedraIzquierda = false;
     }
     
-    private boolean isFueraDeEscenario(int anchoPantalla, int altoPantalla, Piedra piedra) {
+    private boolean isFueraDeEscenario(Piedra piedra) {
         Rectangle pdraRect = piedra.getRectangulo();
         return pdraRect.getBoundsInLocal().getMaxX() < 0 || pdraRect.getX() > anchoPantalla
                 || pdraRect.getBoundsInLocal().getMaxY() < 0 || pdraRect.getY() > altoPantalla;
@@ -483,8 +520,8 @@ public class Jugador {
      * @param anchoDePantalla
      * @author Milton Lenis
      */
-    private int determinarDistanciaCritica(int anchoDePantalla) {
-        int distCrit = ((anchoDePantalla / 2) - 2*ancho);
+    private int determinarDistanciaCritica() {
+        int distCrit = ((anchoPantalla / 2) - 2*ancho);
         if (desplazamiento >= distCrit) {
             distanciaCritica = !(desplazamiento < (distCrit + pasos) && Teclado.isIZQUIERDA());
         } else distanciaCritica = false;
@@ -578,9 +615,9 @@ public class Jugador {
      * @param distCritica
      * @return true si se ha superado la distancia critica y se a caido por un abismo.
      */
-    private boolean respawn1(int altoPantalla, int distCritica){
+    private boolean respawn1(int distCritica){
         boolean seHaSuperadoLaDistanciaCritica = false; 
-        if (y > altoPantalla) { // irse por un precipicio
+        if (muerto) { // irse por un precipicio
             if (distanciaCritica) {
                 x = distCritica;
                 seHaSuperadoLaDistanciaCritica = true;
@@ -612,6 +649,7 @@ public class Jugador {
         }
     }
      
+    @Override
     public Rectangle getRectangulo() {
         return new Rectangle(x, y, ancho, alto);
     }

@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
  */
 public class GraficosJuego extends Canvas {
     private Jugador jugador;
+    private ObjetoInerte paredLimiteIzquierdo;
     private ObjetoInerte fondoDePrueba;
     private ObjetoInerte mensajeDePrueba;
     private ObjetoInerte mensaje2DePrueba;
@@ -29,7 +30,7 @@ public class GraficosJuego extends Canvas {
     private ObjetoInerte suelo2_DePrueba;
     private ObjetoInerte obstaculo1_DePrueba;
     private ObjetoInerte obstaculo2_DePrueba;
-    private int cuenta=0;
+    private ObjetoInerte obstaculo3_DePrueba;
     private Enemigo enemigo1;
     
     private ArrayList<Piedra> piedras;
@@ -65,7 +66,7 @@ public class GraficosJuego extends Canvas {
     private void prepararJuego() throws IOException {
         cargarJugador();
         cargarEscenarioDePrueba();
-        //cargarEnemigos(); PRÓXIMAMENTE
+        cargarEnemigos();
     }
     
     /**
@@ -75,7 +76,15 @@ public class GraficosJuego extends Canvas {
     private void cargarJugador() throws IOException {
         // Se cargan la imagen del jugador        
         Image imagen = new Image("Nucleo/Recursos/Cucullatus.png");
-        jugador = new Jugador(imagen);
+        jugador = new Jugador(imagen, anchoPantalla, altoPantalla);
+    }
+    
+    private void cargarEnemigos() {
+        enemigo1 = new Enemigo(anchoPantalla, altoPantalla);
+        enemigo1.setDimensiones(45, 85);
+        enemigo1.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() - obstaculo3_DePrueba.getAncho() - enemigo1.getAncho() - 1);
+        enemigo1.setY(suelo2_DePrueba.getY() - enemigo1.getAlto());
+        enemigo1.setAnimacion1(true);
     }
     
     /**
@@ -87,14 +96,11 @@ public class GraficosJuego extends Canvas {
         Corazones.Setall(anchoPantalla/5,altoPantalla/500);
         
         Image imagen = new Image("Nucleo/Recursos/fondo.png");
-        Image pared = new Image("Nucleo/Recursos/Pared.png");
-        
-        //Enemigo
-        enemigo1=new Enemigo(2000,500,20,150,150);
         
         // Se crea el fondo y se le añade la imagen 
         fondoDePrueba = new ObjetoInerte(imagen);
         fondoDePrueba.setAlto(altoPantalla);
+        
         
         // Se preparan los elementos del escenario
         imagen = new Image("Nucleo/Recursos/Mensaje.png");
@@ -104,6 +110,10 @@ public class GraficosJuego extends Canvas {
         mensaje2DePrueba = new ObjetoInerte(imagen, 100, 250, 150, 140);
         
         imagen = new Image("Nucleo/Recursos/Madera.png");
+        paredLimiteIzquierdo = new ObjetoInerte(imagen); // borde para que no caiga
+        paredLimiteIzquierdo.setDimensiones(1, altoPantalla);
+        paredLimiteIzquierdo.setCoordenadas(-1, 0);
+        
         ObjetoFlotanteDePrueba1 = new ObjetoInerte(imagen, 502, 425, 47, 40);
         
         ObjetoFlotanteDePrueba2 = new ObjetoInerte(imagen, 502, 202, 94, 40);
@@ -116,13 +126,15 @@ public class GraficosJuego extends Canvas {
         añadirPiedra(suelo1_DePrueba.getX() + 400, suelo1_DePrueba.getY() - 30, 40, 30);
         añadirPiedra(suelo1_DePrueba.getX() + 300, suelo1_DePrueba.getY() - 30, 40, 30);
         
-        //Pared
-        añadirPared(pared,suelo1_DePrueba.getX() + 160, suelo1_DePrueba.getY() - 90, 90,90);
-        // 
         suelo2_DePrueba = new ObjetoInerte(imagen);
         suelo2_DePrueba.setX(suelo1_DePrueba.getX() + suelo1_DePrueba.getAncho() + 200);
         suelo2_DePrueba.setY(suelo1_DePrueba.getY());
-        suelo2_DePrueba.setDimensiones(anchoPantalla - suelo2_DePrueba.getX(), 100);
+        suelo2_DePrueba.setDimensiones(anchoPantalla + 100 - suelo2_DePrueba.getX() , 180);
+        
+        obstaculo3_DePrueba = new ObjetoInerte(imagen);
+        obstaculo3_DePrueba.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() - 40);
+        obstaculo3_DePrueba.setY(suelo2_DePrueba.getY() - suelo2_DePrueba.getAlto());
+        obstaculo3_DePrueba.setDimensiones(40, suelo2_DePrueba.getAlto());
         
         obstaculo1_DePrueba = new ObjetoInerte(imagen);
         obstaculo1_DePrueba.setDimensiones(150, 300);
@@ -133,6 +145,11 @@ public class GraficosJuego extends Canvas {
         obstaculo2_DePrueba.setDimensiones(150, 40);
         obstaculo2_DePrueba.setX(800);         
         obstaculo2_DePrueba.setY(obstaculo1_DePrueba.getY() - obstaculo2_DePrueba.getAlto());
+        
+        imagen = new Image("Nucleo/Recursos/Pared.png");
+        
+        //Pared
+        añadirPared(imagen,suelo1_DePrueba.getX() + 160, suelo1_DePrueba.getY() - 90, 90,90);
     }
     
     /**
@@ -155,6 +172,7 @@ public class GraficosJuego extends Canvas {
         ObjetoFlotanteDePrueba2.dibujar(lapiz);
         suelo1_DePrueba.dibujar(lapiz);
         suelo2_DePrueba.dibujar(lapiz);
+        obstaculo3_DePrueba.dibujar(lapiz);
         obstaculo1_DePrueba.dibujar(lapiz);
         obstaculo2_DePrueba.dibujar(lapiz);
         enemigo1.dibujar(lapiz,jugador);
@@ -166,6 +184,7 @@ public class GraficosJuego extends Canvas {
          */
         new Debug(lapiz);
         Debug.lapiz.fillText("fondo: " + fondoDePrueba.getX(), 20, 114);
+        Debug.lapiz.fillText("Enemigo1 Muerto?: " + enemigo1.isMuerto(), 20, 126);
         //////////////////////////////////////////
     }
     
@@ -175,12 +194,17 @@ public class GraficosJuego extends Canvas {
     private void actualizar() throws IOException{
         // Agregamos los obstaculos a una colección
         ArrayList<ObjetoInerte> obstaculos = new ArrayList<ObjetoInerte>();
+        obstaculos.add(paredLimiteIzquierdo);
         obstaculos.add(suelo1_DePrueba);
         obstaculos.add(suelo2_DePrueba);
+        obstaculos.add(obstaculo3_DePrueba);
         obstaculos.add(obstaculo1_DePrueba);
         obstaculos.add(obstaculo2_DePrueba);
         obstaculos.add(ObjetoFlotanteDePrueba1);
         obstaculos.add(ObjetoFlotanteDePrueba2);
+        
+        ArrayList<Enemigo> enemigos = new ArrayList<>();
+        enemigos.add(enemigo1);
         
         for (Pared pared : paredes) {
             pared.actualizar(jugador);
@@ -188,19 +212,21 @@ public class GraficosJuego extends Canvas {
         for (Piedra piedra : piedras) {
             piedra.actualizar(jugador);
         }
-        jugador.actualizar(anchoPantalla, altoPantalla, obstaculos);
+        jugador.actualizar(obstaculos, enemigos);
         fondoDePrueba.actualizar(jugador);
+        paredLimiteIzquierdo.actualizar(jugador);
         mensajeDePrueba.actualizar(jugador);
         mensaje2DePrueba.actualizar(jugador);
         ObjetoFlotanteDePrueba1.actualizar(jugador);
         ObjetoFlotanteDePrueba2.actualizar(jugador);
         suelo1_DePrueba.actualizar(jugador);
         suelo2_DePrueba.actualizar(jugador);
+        obstaculo3_DePrueba.actualizar(jugador);
         obstaculo1_DePrueba.actualizar(jugador);
         obstaculo2_DePrueba.actualizar(jugador);
         jugador.Graffitear(paredes);
         jugador.RecogerPiedra(piedras);
-        enemigo1.actualizar(jugador);
+        enemigo1.actualizar(jugador, obstaculos);
         if (jugador.isMuerto()) {
             for (Piedra piedra : piedras) {
                 piedra.setVisible(true);
