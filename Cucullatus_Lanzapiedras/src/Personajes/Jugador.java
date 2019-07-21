@@ -31,6 +31,7 @@ public class Jugador extends ObjetoEscenario{
     private Piedra piedra;
     private boolean direccion; // Si es true el jugador mira a la derecha.
     private boolean muerto;
+    private boolean respawn;
     
     // Auxiliares para la gravedad.
     private int countAuxForGravity = 0; // Contador auxiliar para la gravedad.
@@ -59,7 +60,6 @@ public class Jugador extends ObjetoEscenario{
         pasos = 3;
         velocidadVertical = 1;
         direccion = true;
-        muerto = false;
     }
     
     /**
@@ -87,22 +87,21 @@ public class Jugador extends ObjetoEscenario{
      * 
      * Se le pueden añadir nuevos metodos si así se requiere o cualquier
      * otra alteración de su estructura.
-     * 
-     * @param anchoDePantalla
-     * @param obstaculos 
+     * @param obstaculos
+     * @param enemigos
      */
     public void actualizar(ArrayList<ObjetoInerte> obstaculos, ArrayList<Enemigo> enemigos) {
         velocidadHorizontal = desplazamiento;
         int distCrit = determinarDistanciaCritica();
         mover(obstaculos); // Aquí movemos al jugador.
         morir(enemigos);
-        boolean SobrepasadoDistCrit = respawn1(distCrit);
+        boolean SobrepasadoDistCrit = respawn1(distCrit, enemigos);
         velocidadHorizontal = desplazamiento - velocidadHorizontal;
         respawn2(SobrepasadoDistCrit);
         animacion(); // Aquí se ejecuta la animación del jugador.
         lanzarPiedra(obstaculos);
         eliminarPiedraSiSaleDeEscenario();
-        abatirEnemigo(enemigos);
+        abatir(enemigos);
 
         //////////////////////////////////////////
         /**
@@ -118,24 +117,15 @@ public class Jugador extends ObjetoEscenario{
         //////////////////////////////////////////
     }
     
-    private void morir(ArrayList<Enemigo> enemigos) {
-        if (y > altoPantalla || intersectsEnemigo(enemigos)) { // irse por un precipicio
-            muerto = true;
-            vida--;
-            piedras = 0;
-            piedra = null;
-            abortarLanzamiento();
-            revivirEnemigo(enemigos);
-        }
-    }
-    
-    private void abatirEnemigo(ArrayList<Enemigo> enemigos) {
+    private void abatir(ArrayList<Enemigo> enemigos) {
         if (piedra != null) {
             for (Enemigo enemigo : enemigos) {
                 if (enemigo.getRectangulo().intersects(piedra.getRectangulo().getBoundsInLocal())) {
                     enemigo.setMuerto(true);
                     piedra = null;
+                    piedras--;
                     abortarLanzamiento();
+                    break;
                 }
             }
         }
@@ -153,6 +143,7 @@ public class Jugador extends ObjetoEscenario{
             if (!enemigo.isMuerto()) {
                 if (enemigo.getRectangulo().intersects(this.getRectangulo().getBoundsInLocal())) {
                     hayIntercepcion = true;
+                    break;
                 }
             }
         }
@@ -190,7 +181,7 @@ public class Jugador extends ObjetoEscenario{
                aceleracion = 0;
             }
         }
-        saltar(obstaculos);
+        saltar(obstaculos, 6);
     }
     
     private void lanzarPiedra(ArrayList<ObjetoInerte> obstaculos) {
@@ -293,9 +284,7 @@ public class Jugador extends ObjetoEscenario{
     }
     
     private boolean isFueraDeEscenario(Piedra piedra) {
-        Rectangle pdraRect = piedra.getRectangulo();
-        return pdraRect.getBoundsInLocal().getMaxX() < 0 || pdraRect.getX() > anchoPantalla
-                || pdraRect.getBoundsInLocal().getMaxY() < 0 || pdraRect.getY() > altoPantalla;
+        return piedra.getX() > anchoPantalla || piedra.getX() + piedra.getAncho() < 0;
     }
     
     /**
@@ -346,9 +335,8 @@ public class Jugador extends ObjetoEscenario{
      * @param obstaculos array de obstaculos.
      * @author Milton Lenis
      */
-    private void saltar(ArrayList<ObjetoInerte> obstaculos) {
+    private void saltar(ArrayList<ObjetoInerte> obstaculos, int alturaDeSalto) {
         if (aceleracion >= 0) {
-            int alturaDeSalto = 6;
             boolean hayAlgoArriba = !desplazarseArriba(obstaculos, alturaDeSalto);
             aceleracion = alturaDeSalto - velocidadVertical;
             if (aceleracion < 0 || hayAlgoArriba) {
@@ -385,6 +373,7 @@ public class Jugador extends ObjetoEscenario{
                     viaLibre = false;
                     desplazamiento = obs.getxInit() + obs.getAncho();
                     if (!distanciaCritica) { x = desplazamiento; }
+                    break;
                 }
             } 
         }
@@ -426,6 +415,7 @@ public class Jugador extends ObjetoEscenario{
                     viaLibre = false;
                     desplazamiento = obs.getxInit() - ancho;
                     if (!distanciaCritica) { x = desplazamiento; }
+                    break;
                 }
             }
         }
@@ -466,6 +456,7 @@ public class Jugador extends ObjetoEscenario{
                 if (ObstaculoDirVertical(clon, obs.getRectangulo())) {
                     viaLibre = false;
                     y = obs.getY() + obs.getAlto();
+                    break;
                 }
             }            
         }
@@ -499,6 +490,7 @@ public class Jugador extends ObjetoEscenario{
                 if (ObstaculoDirVertical(clon, obs.getRectangulo())) {
                     viaLibre = false;
                     y = obs.getY() - alto;
+                    break;
                 }
             }
         }
@@ -524,7 +516,9 @@ public class Jugador extends ObjetoEscenario{
         int distCrit = ((anchoPantalla / 2) - 2*ancho);
         if (desplazamiento >= distCrit) {
             distanciaCritica = !(desplazamiento < (distCrit + pasos) && Teclado.isIZQUIERDA());
-        } else distanciaCritica = false;
+        } else {
+            distanciaCritica = false;
+        }
         return distCrit;
     }
     
@@ -571,10 +565,15 @@ public class Jugador extends ObjetoEscenario{
         if (((!movimientoI  && movimientoD) || (!movimientoD && movimientoI))) { //Operador lógico "XOR"
             if(this.cuenta == 10) {
                 cuenta = 0;
-                if(this.secuencia == 7) secuencia = 1;
-                else secuencia++; 
+                if(this.secuencia == 7) {
+                    secuencia = 1;
+                } else {
+                    secuencia++;
+                } 
              }
-            else cuenta++;
+            else {
+                cuenta++;
+            }
         }
     }
     
@@ -601,6 +600,12 @@ public class Jugador extends ObjetoEscenario{
         }
     }
     
+    private void morir(ArrayList<Enemigo> enemigos) {
+        if (y > altoPantalla || intersectsEnemigo(enemigos)) {
+            muerto = true;
+        }
+    }
+    
     /**
      * ************************* METODO NO ALTERABLE *************************
      * 
@@ -615,17 +620,24 @@ public class Jugador extends ObjetoEscenario{
      * @param distCritica
      * @return true si se ha superado la distancia critica y se a caido por un abismo.
      */
-    private boolean respawn1(int distCritica){
+    private boolean respawn1(int distCritica, ArrayList<Enemigo> enemigos){
         boolean seHaSuperadoLaDistanciaCritica = false; 
-        if (muerto) { // irse por un precipicio
+        if (muerto) {
             if (distanciaCritica) {
                 x = distCritica;
                 seHaSuperadoLaDistanciaCritica = true;
             } else {
                 x = 40;
             }
-            y = 150;
+            y = 200;
             desplazamiento = x;
+            muerto = false;
+            respawn = true;
+            vida--;
+            piedra = null;
+            piedras = 0;
+            abortarLanzamiento();
+            revivirEnemigo(enemigos);
         }
         return seHaSuperadoLaDistanciaCritica;
     }
@@ -748,6 +760,14 @@ public class Jugador extends ObjetoEscenario{
 
     public void setMuerto(boolean muerto) {
         this.muerto = muerto;
+    }
+
+    public boolean isRespawn() {
+        return respawn;
+    }
+
+    public void setRespawn(boolean respawn) {
+        this.respawn = respawn;
     }
     
 }

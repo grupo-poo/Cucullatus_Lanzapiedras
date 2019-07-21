@@ -60,6 +60,7 @@ public class Piedra extends ObjetoEscenario{
                 if (ObstaculoDirHorizontal(Clon, obs.getRectangulo())) {
                     viaLibre = false;
                     x = obs.getX() - ancho;
+                    break;
                 }
             }
         }
@@ -76,6 +77,7 @@ public class Piedra extends ObjetoEscenario{
                 if (ObstaculoDirHorizontal(Clon, obs.getRectangulo())) {
                     viaLibre = false;
                     x = obs.getX() + obs.getAncho();
+                    break;
                 }
             }
         }
@@ -92,6 +94,7 @@ public class Piedra extends ObjetoEscenario{
                 if (ObstaculoDirVertical(Clon, obs.getRectangulo())) {
                     viaLibre = false;
                     y = obs.getY() + obs.getAlto();
+                    break;
                 }
             }
         }
@@ -108,6 +111,7 @@ public class Piedra extends ObjetoEscenario{
                 if (ObstaculoDirVertical(Clon, obs.getRectangulo())) {
                     viaLibre = false;
                     y = obs.getY() - alto;
+                    break;
                 }
             }
         }

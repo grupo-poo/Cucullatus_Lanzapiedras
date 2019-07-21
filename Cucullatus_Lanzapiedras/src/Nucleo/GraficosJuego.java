@@ -28,10 +28,12 @@ public class GraficosJuego extends Canvas {
     private ObjetoInerte ObjetoFlotanteDePrueba2;
     private ObjetoInerte suelo1_DePrueba;
     private ObjetoInerte suelo2_DePrueba;
+    private ObjetoInerte suelo3_DePrueba;
     private ObjetoInerte obstaculo1_DePrueba;
     private ObjetoInerte obstaculo2_DePrueba;
     private ObjetoInerte obstaculo3_DePrueba;
     private Enemigo enemigo1;
+    private Enemigo enemigo2;
     
     private ArrayList<Piedra> piedras;
     private ArrayList<Pared> paredes;
@@ -45,20 +47,12 @@ public class GraficosJuego extends Canvas {
         super(anchoPantalla, altoPantalla);
         this.altoPantalla = (int) altoPantalla;
         this.anchoPantalla = (int) anchoPantalla;
-        paredes= new ArrayList<>();
-        piedras=new ArrayList<>();
-        inicializar();
-    }
-    
-    /**
-     * *************************** METODO ALTERABLE ***************************
-     * @throws IOException 
-     */
-    private void inicializar() throws IOException{
+        paredes = new ArrayList<>();
+        piedras = new ArrayList<>();
         ejecutandose = true;
         prepararJuego();
     }
-    
+
     /**
      * *************************** METODO ALTERABLE ***************************
      * @throws IOException 
@@ -81,10 +75,16 @@ public class GraficosJuego extends Canvas {
     
     private void cargarEnemigos() {
         enemigo1 = new Enemigo(anchoPantalla, altoPantalla);
-        enemigo1.setDimensiones(45, 85);
         enemigo1.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() - obstaculo3_DePrueba.getAncho() - enemigo1.getAncho() - 1);
         enemigo1.setY(suelo2_DePrueba.getY() - enemigo1.getAlto());
         enemigo1.setAnimacion1(true);
+        
+        enemigo2 = new Enemigo(anchoPantalla, altoPantalla);
+        enemigo2.setX(suelo3_DePrueba.getX() + (suelo3_DePrueba.getAncho() / 2));
+        enemigo2.setY(suelo3_DePrueba.getY() - enemigo2.getAlto());
+        enemigo2.setAnimacion2(true);
+        enemigo2.setLanzarPiedra(true);
+        
     }
     
     /**
@@ -131,10 +131,10 @@ public class GraficosJuego extends Canvas {
         suelo2_DePrueba.setY(suelo1_DePrueba.getY());
         suelo2_DePrueba.setDimensiones(anchoPantalla + 100 - suelo2_DePrueba.getX() , 180);
         
-        obstaculo3_DePrueba = new ObjetoInerte(imagen);
-        obstaculo3_DePrueba.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() - 40);
-        obstaculo3_DePrueba.setY(suelo2_DePrueba.getY() - suelo2_DePrueba.getAlto());
-        obstaculo3_DePrueba.setDimensiones(40, suelo2_DePrueba.getAlto());
+        suelo3_DePrueba = new ObjetoInerte(imagen);
+        suelo3_DePrueba.setDimensiones(suelo2_DePrueba.getAncho(), suelo2_DePrueba.getAlto());
+        suelo3_DePrueba.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() + 210);
+        suelo3_DePrueba.setY(suelo2_DePrueba.getY());
         
         obstaculo1_DePrueba = new ObjetoInerte(imagen);
         obstaculo1_DePrueba.setDimensiones(150, 300);
@@ -145,6 +145,11 @@ public class GraficosJuego extends Canvas {
         obstaculo2_DePrueba.setDimensiones(150, 40);
         obstaculo2_DePrueba.setX(800);         
         obstaculo2_DePrueba.setY(obstaculo1_DePrueba.getY() - obstaculo2_DePrueba.getAlto());
+        
+        obstaculo3_DePrueba = new ObjetoInerte(imagen);
+        obstaculo3_DePrueba.setDimensiones(40, 110);
+        obstaculo3_DePrueba.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() - 40);
+        obstaculo3_DePrueba.setY(suelo2_DePrueba.getY() - obstaculo3_DePrueba.getAlto());
         
         imagen = new Image("Nucleo/Recursos/Pared.png");
         
@@ -172,10 +177,12 @@ public class GraficosJuego extends Canvas {
         ObjetoFlotanteDePrueba2.dibujar(lapiz);
         suelo1_DePrueba.dibujar(lapiz);
         suelo2_DePrueba.dibujar(lapiz);
+        suelo3_DePrueba.dibujar(lapiz);
         obstaculo3_DePrueba.dibujar(lapiz);
         obstaculo1_DePrueba.dibujar(lapiz);
         obstaculo2_DePrueba.dibujar(lapiz);
         enemigo1.dibujar(lapiz,jugador);
+        enemigo2.dibujar(lapiz,jugador);
         jugador.dibujar(lapiz);
         
         //////////////////////////////////////////
@@ -185,6 +192,7 @@ public class GraficosJuego extends Canvas {
         new Debug(lapiz);
         Debug.lapiz.fillText("fondo: " + fondoDePrueba.getX(), 20, 114);
         Debug.lapiz.fillText("Enemigo1 Muerto?: " + enemigo1.isMuerto(), 20, 126);
+        Debug.lapiz.fillText("Enemigo2 Muerto?: " + enemigo2.isMuerto(), 20, 138);
         //////////////////////////////////////////
     }
     
@@ -193,10 +201,11 @@ public class GraficosJuego extends Canvas {
      */
     private void actualizar() throws IOException{
         // Agregamos los obstaculos a una colección
-        ArrayList<ObjetoInerte> obstaculos = new ArrayList<ObjetoInerte>();
+        ArrayList<ObjetoInerte> obstaculos = new ArrayList<>();
         obstaculos.add(paredLimiteIzquierdo);
         obstaculos.add(suelo1_DePrueba);
         obstaculos.add(suelo2_DePrueba);
+        obstaculos.add(suelo3_DePrueba);
         obstaculos.add(obstaculo3_DePrueba);
         obstaculos.add(obstaculo1_DePrueba);
         obstaculos.add(obstaculo2_DePrueba);
@@ -205,6 +214,7 @@ public class GraficosJuego extends Canvas {
         
         ArrayList<Enemigo> enemigos = new ArrayList<>();
         enemigos.add(enemigo1);
+        enemigos.add(enemigo2);
         
         for (Pared pared : paredes) {
             pared.actualizar(jugador);
@@ -221,16 +231,18 @@ public class GraficosJuego extends Canvas {
         ObjetoFlotanteDePrueba2.actualizar(jugador);
         suelo1_DePrueba.actualizar(jugador);
         suelo2_DePrueba.actualizar(jugador);
+        suelo3_DePrueba.actualizar(jugador);
         obstaculo3_DePrueba.actualizar(jugador);
         obstaculo1_DePrueba.actualizar(jugador);
         obstaculo2_DePrueba.actualizar(jugador);
         jugador.Graffitear(paredes);
         jugador.RecogerPiedra(piedras);
         enemigo1.actualizar(jugador, obstaculos);
-        if (jugador.isMuerto()) {
+        enemigo2.actualizar(jugador, obstaculos);
+        if (jugador.isRespawn()) {
             for (Piedra piedra : piedras) {
                 piedra.setVisible(true);
-                jugador.setMuerto(false);
+                jugador.setRespawn(false);
             }
             if (jugador.getVida() == 0) {
                 ejecutandose = false;
@@ -240,6 +252,7 @@ public class GraficosJuego extends Canvas {
     
     /**
      * *************************** METODO ALTERABLE ***************************
+     * @throws java.io.IOException
      */
     public void repintar() throws IOException {
         GraphicsContext lapiz = this.getGraphicsContext2D();
