@@ -28,6 +28,11 @@ public class Jugador extends Personaje{
     private int totalEnemigosAbatidos = 0;
     private int aerosolesFaltantes = 3;
     private int murosFaltantes = 3;
+    private String cronometro;
+    
+    // Auxiliares para el cronometro
+    private int contadorAux = 0;
+    private int segundos = 0;
     
     // Auxiliares para la animación.
     private int secuencia = 1;//Numero de imagenes, empieza por 1
@@ -52,11 +57,15 @@ public class Jugador extends Personaje{
         if (piedra != null) {
             piedra.dibujar(lapiz);
         }
+        cronometro();
         lapiz.drawImage(imagen, x, y, ancho, alto);
-        lapiz.fillText("Muros que faltan por graffitear: " + murosFaltantes, 20, 30);
-        lapiz.fillText("Enemigos Abatidos: " + (enmigosAbatidosPorNivel + totalEnemigosAbatidos), 20, 44);
-        lapiz.fillText("Aerosoles Faltantes: " + aerosolesFaltantes, 20, 58);
-        lapiz.fillText("Piedras: " + piedras, 20, 72);
+        if (cronometro != null) {
+            lapiz.fillText("Tiempo de juego: " + cronometro, 20, 30);
+        }
+        lapiz.fillText("Muros que faltan por graffitear: " + murosFaltantes, 20, 44);
+        lapiz.fillText("Enemigos Abatidos: " + (enmigosAbatidosPorNivel + totalEnemigosAbatidos), 20, 58);
+        lapiz.fillText("Aerosoles Faltantes: " + aerosolesFaltantes, 20, 72);
+        lapiz.fillText("Piedras: " + piedras, 20, 86);
     }
     
     /**
@@ -87,6 +96,7 @@ public class Jugador extends Personaje{
         eliminarPiedraSiSaleDeEscenario();
         abatir(enemigos);
         graffitear(paredes);
+        this.cronometro = cronometro();
         if (recogerObjeto(piedras)) { this.piedras++; }
         if (recogerObjeto(aerosoles)) {
             this.aerosoles++;
@@ -667,6 +677,16 @@ public class Jugador extends Personaje{
         }
         return hayIntercepcion;
     }
+    
+    private String cronometro() {
+        if (contadorAux == 120) {
+            contadorAux=0;
+            segundos++;
+        } else {
+            contadorAux++;
+        }
+        return "hh " + ((segundos/3600)%60) + " / mm " + ((segundos/60)%60) + " / ss " + (segundos%60);
+    }
 
     public byte getPasos() {
         return pasos;
@@ -739,4 +759,25 @@ public class Jugador extends Personaje{
     public void setTotalEnemigosAbatidos(int totalEnemigosAbatidos) {
         this.totalEnemigosAbatidos = totalEnemigosAbatidos;
     }
+
+    public String getCronometro() {
+        return cronometro;
+    }
+
+    public int getPiedras() {
+        return piedras;
+    }
+
+    public int getAerosoles() {
+        return aerosoles;
+    }
+
+    public int getAerosolesFaltantes() {
+        return aerosolesFaltantes;
+    }
+
+    public int getMurosFaltantes() {
+        return murosFaltantes;
+    }
+    
 }
