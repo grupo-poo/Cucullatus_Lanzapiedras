@@ -2,7 +2,6 @@ package Personajes;
 
 import Escenario.ObjetoInerte;
 import Escenario.ObjetoRecogible;
-import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
@@ -28,7 +27,7 @@ public class Enemigo extends Personaje{
         this.alto = 85;
     }
     
-    public void actualizar(Jugador jugador, ArrayList<ObjetoInerte> obstaculos) {
+    public void actualizar(Jugador jugador, ObjetoInerte[] obstaculos) {
         if (jugador.isDistanciaCritica()) {
             x -= jugador.getVelocidadHorizontal();
         }
@@ -54,7 +53,7 @@ public class Enemigo extends Personaje{
         moverse = !(x > anchoPantalla + 190 || x + ancho < -190);
     }
     
-    private void movimiento(ArrayList<ObjetoInerte> obstaculos) {
+    private void movimiento(ObjetoInerte[] obstaculos) {
         animacion1(obstaculos);
         animacion2(obstaculos);
         //animacion3...
@@ -70,7 +69,7 @@ public class Enemigo extends Personaje{
         }
     }
     
-    private void animacion1(ArrayList<ObjetoInerte> obstaculos) {
+    private void animacion1(ObjetoInerte[] obstaculos) {
         if (animacion1 && moverse && !muerto) {
             if (direccion) {
                 direccion = desplazarseDerecha(obstaculos, 3);
@@ -80,7 +79,7 @@ public class Enemigo extends Personaje{
         }
     }
     
-    private void animacion2(ArrayList<ObjetoInerte> obstaculos) {
+    private void animacion2(ObjetoInerte[] obstaculos) {
         if (animacion2 && moverse && !muerto) {
             if (gravedad(obstaculos)) {
                 aceleracion = 0;
@@ -89,7 +88,7 @@ public class Enemigo extends Personaje{
         }
     }
     
-    public boolean desplazarseDerecha(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+    public boolean desplazarseDerecha(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
         Clon.setX(x + velocidad);
@@ -106,7 +105,7 @@ public class Enemigo extends Personaje{
         return viaLibre;
     }
     
-    public boolean desplazarseIzquierda(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+    public boolean desplazarseIzquierda(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
         Clon.setX(x - velocidad);
@@ -123,7 +122,7 @@ public class Enemigo extends Personaje{
         return viaLibre;
     }
     
-    public boolean desplazarseArriba(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+    public boolean desplazarseArriba(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
         Clon.setY(y - velocidad);
@@ -140,7 +139,7 @@ public class Enemigo extends Personaje{
         return viaLibre;
     }
     
-    public boolean desplazarseAbajo(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+    public boolean desplazarseAbajo(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
         Clon.setY(y + velocidad);
@@ -157,7 +156,7 @@ public class Enemigo extends Personaje{
         return viaLibre;
     }
     
-    private void lanzarPiedra(ArrayList<ObjetoInerte> obstaculos, Jugador jugador) {
+    private void lanzarPiedra(ObjetoInerte[] obstaculos, Jugador jugador) {
         if ((!muerto && isVisible()) || piedra != null) {
             if (direccion) {
                 if (!(piedraIzquierda)) {
@@ -176,7 +175,7 @@ public class Enemigo extends Personaje{
         }
     }
     
-    private void desplazarPiedraDerecha(ArrayList<ObjetoInerte> obstaculos, Jugador jugador) {
+    private void desplazarPiedraDerecha(ObjetoInerte[] obstaculos, Jugador jugador) {
         if (piedraDerecha) {
             piedra.actualizar(jugador);
             if (!piedra.desplazarseDerecha(obstaculos, 9)) {
@@ -186,7 +185,7 @@ public class Enemigo extends Personaje{
         }
     }
     
-    private void desplazarPiedraIzquierda(ArrayList<ObjetoInerte> obstaculos, Jugador jugador) {
+    private void desplazarPiedraIzquierda(ObjetoInerte[] obstaculos, Jugador jugador) {
         if (piedraIzquierda) {
             piedra.actualizar(jugador);
             if (!piedra.desplazarseIzquierda(obstaculos, 9)) {
@@ -243,7 +242,7 @@ public class Enemigo extends Personaje{
      * @author Milton Lenis
      */
    @Override
-    protected boolean gravedad(ArrayList<ObjetoInerte> obstaculos) {
+    protected boolean gravedad(ObjetoInerte[] obstaculos) {
         if(countAuxForGravity == 5) {
             countAuxForGravity = 0;
             velocidadVertical++;
@@ -275,7 +274,7 @@ public class Enemigo extends Personaje{
      * @author Milton Lenis
      */
    @Override
-    protected void saltar(ArrayList<ObjetoInerte> obstaculos, int alturaDeSalto) {
+    protected void saltar(ObjetoInerte[] obstaculos, int alturaDeSalto) {
         if (aceleracion >= 0) {
             boolean hayAlgoArriba = !desplazarseArriba(obstaculos, alturaDeSalto*3);
             aceleracion = alturaDeSalto - velocidadVertical;

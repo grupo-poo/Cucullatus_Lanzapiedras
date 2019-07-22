@@ -1,6 +1,5 @@
 package Escenario;
 
-import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
@@ -27,7 +26,7 @@ public class ObjetoRecogible extends ObjetoInerte {
         }
     }
     
-    public boolean desplazarseDerecha(ArrayList<ObjetoInerte> obstaculos , int velocidad) {
+    public boolean desplazarseDerecha(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
         Clon.setX(x + velocidad);
@@ -44,7 +43,7 @@ public class ObjetoRecogible extends ObjetoInerte {
         return viaLibre;
     }
     
-    public boolean desplazarseIzquierda(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+    public boolean desplazarseIzquierda(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
         Clon.setX(x - velocidad);
@@ -61,7 +60,7 @@ public class ObjetoRecogible extends ObjetoInerte {
         return viaLibre;
     }
     
-    public boolean desplazarseArriba(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+    public boolean desplazarseArriba(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
         Clon.setY(y - velocidad);
@@ -78,7 +77,7 @@ public class ObjetoRecogible extends ObjetoInerte {
         return viaLibre;
     }
     
-    public boolean desplazarseAbajo(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+    public boolean desplazarseAbajo(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle Clon = getRectangulo();
         Clon.setY(y + velocidad);

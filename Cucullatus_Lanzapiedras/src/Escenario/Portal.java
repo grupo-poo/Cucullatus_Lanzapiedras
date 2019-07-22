@@ -1,7 +1,6 @@
 package Escenario;
 
 import Personajes.Jugador;
-import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -26,7 +25,7 @@ public class Portal extends ObjetoInerte{
         }
     }
     
-    public void actualizar(Jugador jugador, ArrayList<Pared> paredes) {        
+    public void actualizar(Jugador jugador, Pared[] paredes) {        
         if (jugador.isDistanciaCritica()) {
             x -= jugador.getVelocidadHorizontal();
         }
@@ -34,9 +33,9 @@ public class Portal extends ObjetoInerte{
         transportar = abrirPortal && intersectJugador(jugador);
     }
     
-    private boolean estadoTransportacion(ArrayList<Pared> paredes, byte arraySize) {
+    private boolean estadoTransportacion(Pared[] paredes, byte arraySize) {
         if (arraySize < 0) return true;
-        boolean p = paredes.get(arraySize).isIsGraffiteada();
+        boolean p = paredes[arraySize].isIsGraffiteada();
         return p && estadoTransportacion(paredes, (byte)(arraySize - 1));
     }
     

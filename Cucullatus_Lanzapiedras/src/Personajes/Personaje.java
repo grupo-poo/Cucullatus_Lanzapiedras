@@ -3,7 +3,6 @@ package Personajes;
 import Escenario.ObjetoEscenario;
 import Escenario.ObjetoInerte;
 import Escenario.ObjetoRecogible;
-import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -46,7 +45,7 @@ public abstract class Personaje extends ObjetoEscenario{
      * @param obstaculos array de obstaculos.
      * @return Devuelve true si el jugador intercepta con algo debajo de él.
      */
-    protected abstract boolean gravedad(ArrayList<ObjetoInerte> obstaculos);
+    protected abstract boolean gravedad(ObjetoInerte[] obstaculos);
     
     /**
      * Este metodo cambia los siguientes atributos:
@@ -62,7 +61,7 @@ public abstract class Personaje extends ObjetoEscenario{
      * @param obstaculos array de obstaculos.
      * @param alturaDeSalto que tan alto subirá el personaje al saltar.
      */
-    protected abstract void saltar(ArrayList<ObjetoInerte> obstaculos, int alturaDeSalto);
+    protected abstract void saltar(ObjetoInerte[] obstaculos, int alturaDeSalto);
     
     /**
      * @param piedra

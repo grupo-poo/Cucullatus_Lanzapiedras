@@ -5,7 +5,6 @@ import Escenario.ObjetoInerte;
 import Escenario.Pared;
 import Escenario.ObjetoRecogible;
 import Nucleo.Debug;
-import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
@@ -65,8 +64,8 @@ public class Jugador extends Personaje{
      * @param piedras
      * @param aerosoles 
      */
-    public void actualizar(ArrayList<ObjetoInerte> obstaculos, ArrayList<Enemigo> enemigos,
-            ArrayList<Pared> paredes, ArrayList<ObjetoRecogible> piedras, ArrayList<ObjetoRecogible> aerosoles) {
+    public void actualizar(ObjetoInerte[] obstaculos, Enemigo[] enemigos,
+            Pared[] paredes, ObjetoRecogible[] piedras, ObjetoRecogible[] aerosoles) {
         velocidadHorizontal = desplazamiento;
         int distCrit = determinarDistanciaCritica();
         mover(obstaculos); // Aquí movemos al jugador.
@@ -114,7 +113,7 @@ public class Jugador extends Personaje{
      * 
      * @param obstaculos array de obstaculos.
      */
-    private void mover(ArrayList<ObjetoInerte> obstaculos) {
+    private void mover(ObjetoInerte[] obstaculos) {
         boolean estaTocandoSuelo = gravedad(obstaculos);
         
         if (Teclado.isIZQUIERDA()) {
@@ -131,7 +130,7 @@ public class Jugador extends Personaje{
         saltar(obstaculos, 6);
     }
     
-    private void lanzarPiedra(ArrayList<ObjetoInerte> obstaculos) {
+    private void lanzarPiedra(ObjetoInerte[] obstaculos) {
         if (piedras > 0) {
             if (Teclado.isLANZARFRONTAL()) {
                 if (direccion) {
@@ -163,7 +162,7 @@ public class Jugador extends Personaje{
         }
     }
     
-    private void desplazarPiedraDerecha(ArrayList<ObjetoInerte> obstaculos) {
+    private void desplazarPiedraDerecha(ObjetoInerte[] obstaculos) {
         if (piedraDerecha) {
             piedra.actualizar(this);
             if (!piedra.desplazarseDerecha(obstaculos, 9)) {
@@ -174,7 +173,7 @@ public class Jugador extends Personaje{
         }
     }
     
-    private void desplazarPiedraIzquierda(ArrayList<ObjetoInerte> obstaculos) {
+    private void desplazarPiedraIzquierda(ObjetoInerte[] obstaculos) {
         if (piedraIzquierda) {
             piedra.actualizar(this);
             if (!piedra.desplazarseIzquierda(obstaculos, 9)) {
@@ -185,7 +184,7 @@ public class Jugador extends Personaje{
         }
     }
     
-    private void desplazarPiedraArriba(ArrayList<ObjetoInerte> obstaculos) {
+    private void desplazarPiedraArriba(ObjetoInerte[] obstaculos) {
         if (piedraArriba) {
             piedra.actualizar(this);
             if (!piedra.desplazarseArriba(obstaculos, 9)) {
@@ -196,7 +195,7 @@ public class Jugador extends Personaje{
         }
     }
     
-    private void desplazarPiedraAbajo(ArrayList<ObjetoInerte> obstaculos) {
+    private void desplazarPiedraAbajo(ObjetoInerte[] obstaculos) {
         if (piedraAbajo) {
             piedra.actualizar(this);
             if (!piedra.desplazarseAbajo(obstaculos, 9)) {
@@ -249,7 +248,7 @@ public class Jugador extends Personaje{
      * @author Milton Lenis
      */
     @Override
-    protected boolean gravedad(ArrayList<ObjetoInerte> obstaculos) {
+    protected boolean gravedad(ObjetoInerte[] obstaculos) {
         if(countAuxForGravity == 5) {
             countAuxForGravity = 0;
             velocidadVertical++;
@@ -278,10 +277,10 @@ public class Jugador extends Personaje{
      * ningún metodo.
      * 
      * @param obstaculos array de obstaculos.
-     * @author Milton Lenis
+     * @param alturaDeSalto
      */
     @Override
-    protected void saltar(ArrayList<ObjetoInerte> obstaculos, int alturaDeSalto) {
+    protected void saltar(ObjetoInerte[] obstaculos, int alturaDeSalto) {
         if (aceleracion >= 0) {
             boolean hayAlgoArriba = !desplazarseArriba(obstaculos, alturaDeSalto);
             aceleracion = alturaDeSalto - velocidadVertical;
@@ -309,7 +308,7 @@ public class Jugador extends Personaje{
      * @return Devuelve false si se intersepta un obstaculo.
      * @author Milton Lenis
      */
-    private boolean desplazarseIzquierda(ArrayList<ObjetoInerte> obstaculos) {
+    private boolean desplazarseIzquierda(ObjetoInerte[] obstaculos) {
         boolean viaLibre = true;
         Rectangle clon = getRectangulo();
         clon.setX(x - pasos);
@@ -351,7 +350,7 @@ public class Jugador extends Personaje{
      * @return Devuelve false si se intersepta un obstaculo.
      * @author Milton Lenis
      */
-    private boolean desplazarseDerecha(ArrayList<ObjetoInerte> obstaculos) {
+    private boolean desplazarseDerecha(ObjetoInerte[] obstaculos) {
         boolean viaLibre = true;
         Rectangle clon = getRectangulo();
         clon.setX(x + pasos);
@@ -393,7 +392,7 @@ public class Jugador extends Personaje{
      * @return Devuelve false si se intersepta un obstaculo.
      * @author Milton Lenis
      */
-    private boolean desplazarseArriba(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+    private boolean desplazarseArriba(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle clon = getRectangulo();
         clon.setY(y - (pasos * velocidad));
@@ -427,7 +426,7 @@ public class Jugador extends Personaje{
      * @return Devuelve false si se intersepta un obstaculo.
      * @author Milton Lenis
      */
-    private boolean desplazarseAbajo(ArrayList<ObjetoInerte> obstaculos, int velocidad) {
+    private boolean desplazarseAbajo(ObjetoInerte[] obstaculos, int velocidad) {
         boolean viaLibre = true;
         Rectangle clon = getRectangulo();
         clon.setY(y + (pasos * velocidad));
@@ -523,7 +522,7 @@ public class Jugador extends Personaje{
         }
     }
     
-    public void graffitear(ArrayList<Pared> paredes){
+    public void graffitear(Pared[] paredes){
         for(Pared pared: paredes){
             if (Teclado.isVANDALIZAR() && !pared.isIsGraffiteada() && aerosoles > 0) {
                 if((pared.getX() + pared.getAncho() >= x + ancho && pared.getX() < x
@@ -535,7 +534,7 @@ public class Jugador extends Personaje{
         }
     }
     
-    public boolean recogerObjeto(ArrayList<ObjetoRecogible> piedras){
+    public boolean recogerObjeto(ObjetoRecogible[] piedras){
         boolean recoger = false;
         for(ObjetoRecogible piedra: piedras){
             if (piedra.isVisible()) {
@@ -548,7 +547,7 @@ public class Jugador extends Personaje{
         return recoger;
     }
     
-    private void morir(ArrayList<Enemigo> enemigos) {
+    private void morir(Enemigo[] enemigos) {
         if (y > altoPantalla || intersectsEnemigo(enemigos)) {
             muerto = true;
         }
@@ -568,8 +567,8 @@ public class Jugador extends Personaje{
      * @param distCritica
      * @return true si se ha superado la distancia critica y se a caido por un abismo.
      */
-    private void respawn1(int distCritica, ArrayList<Enemigo> enemigos,
-            ArrayList<Pared> paredes, ArrayList<ObjetoRecogible> piedras, ArrayList<ObjetoRecogible> aerosoles){
+    private void respawn1(int distCritica, Enemigo[] enemigos,
+            Pared[] paredes, ObjetoRecogible[] piedras, ObjetoRecogible[] aerosoles){
         if (muerto) {
             if (distanciaCritica) {
                 this.x = distCritica;
@@ -610,7 +609,7 @@ public class Jugador extends Personaje{
         }
     }
     
-    private void abatir(ArrayList<Enemigo> enemigos) {
+    private void abatir(Enemigo[] enemigos) {
         if (piedra != null) {
             for (Enemigo enemigo : enemigos) {
                 if (enemigo.getRectangulo().intersects(piedra.getRectangulo().getBoundsInLocal())) {
@@ -624,25 +623,25 @@ public class Jugador extends Personaje{
         }
     }
     
-    private void revivirEnemigo(ArrayList<Enemigo> enemigos) {
+    private void revivirEnemigo(Enemigo[] enemigos) {
         for (Enemigo enemigo : enemigos) {
             enemigo.setMuerto(false);
         }
     }
     
-    private void desgraffitear(ArrayList<Pared> paredes) {
+    private void desgraffitear(Pared[] paredes) {
         for (Pared pared : paredes) {
             pared.setIsGraffiteada(false);
         }
     }
     
-    private void reaparecerObjetos(ArrayList<ObjetoRecogible> piedras) {
+    private void reaparecerObjetos(ObjetoRecogible[] piedras) {
         for (ObjetoRecogible piedra : piedras) {
             piedra.setVisible(true);
         }
     }
     
-    private boolean intersectsEnemigo(ArrayList<Enemigo> enemigos) {
+    private boolean intersectsEnemigo(Enemigo[] enemigos) {
         boolean hayIntercepcion = false;
         for (Enemigo enemigo : enemigos) {
             if (!enemigo.isMuerto()) {
