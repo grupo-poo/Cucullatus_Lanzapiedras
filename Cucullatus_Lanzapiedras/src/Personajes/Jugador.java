@@ -26,6 +26,8 @@ public class Jugador extends Personaje{
     private int aerosoles = 0; //Cantidad de piedras del jugador
     private int enmigosAbatidosPorNivel = 0;
     private int totalEnemigosAbatidos = 0;
+    private int aerosolesFaltantes = 3;
+    private int murosFaltantes = 3;
     
     // Auxiliares para la animación.
     private int secuencia = 1;//Numero de imagenes, empieza por 1
@@ -51,7 +53,10 @@ public class Jugador extends Personaje{
             piedra.dibujar(lapiz);
         }
         lapiz.drawImage(imagen, x, y, ancho, alto);
-        lapiz.fillText("Enemigos Abatidos: " + (enmigosAbatidosPorNivel + totalEnemigosAbatidos), 400, 100, 300);
+        lapiz.fillText("Muros que faltan por graffitear: " + murosFaltantes, 20, 30);
+        lapiz.fillText("Enemigos Abatidos: " + (enmigosAbatidosPorNivel + totalEnemigosAbatidos), 20, 44);
+        lapiz.fillText("Aerosoles Faltantes: " + aerosolesFaltantes, 20, 58);
+        lapiz.fillText("Piedras: " + piedras, 20, 72);
     }
     
     /**
@@ -83,20 +88,23 @@ public class Jugador extends Personaje{
         abatir(enemigos);
         graffitear(paredes);
         if (recogerObjeto(piedras)) { this.piedras++; }
-        if (recogerObjeto(aerosoles)) { this.aerosoles++; }
+        if (recogerObjeto(aerosoles)) {
+            this.aerosoles++;
+            this.aerosolesFaltantes--;
+        }
 
         //////////////////////////////////////////
         /**
          * Todo esto puede ser eliminado, solo sirve para depurar.
          */
-        Debug.lapiz.fillText("Desplazamiento: " + desplazamiento, 20, 30);
-        Debug.lapiz.fillText("Posición x: " + x, 20, 42);
-        Debug.lapiz.fillText("Posición y: " + y, 20, 54);
-        Debug.lapiz.fillText("Velocidad: " + velocidadHorizontal, 20, 66);
-        Debug.lapiz.fillText("Distancia Critica: " + distanciaCritica, 20, 78);
-        Debug.lapiz.fillText("Aceleracion: " + aceleracion, 20, 90);
-        Debug.lapiz.fillText("Piedras: " + this.piedras, 20, 102);
-        Debug.lapiz.fillText("Aerosoles: " + this.aerosoles, 20, 126);
+        Debug.lapiz.fillText("Desplazamiento: " + desplazamiento, anchoPantalla - 200, 30);
+        Debug.lapiz.fillText("Posición x: " + x, anchoPantalla - 200, 42);
+        Debug.lapiz.fillText("Posición y: " + y, anchoPantalla - 200, 54);
+        Debug.lapiz.fillText("Velocidad: " + velocidadHorizontal, anchoPantalla - 200, 66);
+        Debug.lapiz.fillText("Distancia Critica: " + distanciaCritica, anchoPantalla - 200, 78);
+        Debug.lapiz.fillText("Aceleracion: " + aceleracion, anchoPantalla - 200, 90);
+        Debug.lapiz.fillText("Piedras: " + this.piedras, anchoPantalla - 200, 102);
+        Debug.lapiz.fillText("Aerosoles: " + this.aerosoles, anchoPantalla - 200, 114);
         //////////////////////////////////////////
     }
     
@@ -322,7 +330,6 @@ public class Jugador extends Personaje{
                     viaLibre = false;
                     desplazamiento = obs.getxInit() + obs.getAncho();
                     if (!distanciaCritica) { x = desplazamiento; }
-                    break;
                 }
             } 
         }
@@ -364,7 +371,6 @@ public class Jugador extends Personaje{
                     viaLibre = false;
                     desplazamiento = obs.getxInit() - ancho;
                     if (!distanciaCritica) { x = desplazamiento; }
-                    break;
                 }
             }
         }
@@ -405,7 +411,6 @@ public class Jugador extends Personaje{
                 if (ObstaculoDirVertical(clon, obs.getRectangulo())) {
                     viaLibre = false;
                     y = obs.getY() + obs.getAlto();
-                    break;
                 }
             }            
         }
@@ -439,7 +444,6 @@ public class Jugador extends Personaje{
                 if (ObstaculoDirVertical(clon, obs.getRectangulo())) {
                     viaLibre = false;
                     y = obs.getY() - alto;
-                    break;
                 }
             }
         }
@@ -533,6 +537,7 @@ public class Jugador extends Personaje{
                         && pared.getY() + pared.getAlto() >= y + alto && pared.getY() <= y)){//Se puede generalizar para todo obstáculo que tenga encima la pared
                     pared.setIsGraffiteada(true);
                     aerosoles--;
+                    murosFaltantes--;
                 }
             }
         }
@@ -586,6 +591,8 @@ public class Jugador extends Personaje{
             this.piedras = 0;
             this.aerosoles = 0;
             this.enmigosAbatidosPorNivel = 0;
+            this.aerosolesFaltantes = 3;
+            this.murosFaltantes = 3;
             abortarLanzamiento();
             revivirEnemigo(enemigos);
             desgraffitear(paredes);

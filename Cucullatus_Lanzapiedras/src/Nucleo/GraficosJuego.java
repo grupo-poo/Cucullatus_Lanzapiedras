@@ -149,7 +149,7 @@ public class GraficosJuego extends Canvas {
          * Todo esto puede ser eliminado, solo sirve para depurar.
          */
         new Debug(lapiz);
-        Debug.lapiz.fillText("fondo: " + elementosDeFondo[0].getX(), 20, 114);
+        Debug.lapiz.fillText("fondo: " + elementosDeFondo[0].getX(), anchoPantalla - 200, 126);
         //////////////////////////////////////////
     }
     
@@ -181,7 +181,7 @@ public class GraficosJuego extends Canvas {
             nivel++;
             cargarEsceneraio();
             int abatidos = jugador.getEnmigosAbatidosPorNivel();
-            jugador.setTotalEnemigosAbatidos(abatidos);
+            jugador.setTotalEnemigosAbatidos(jugador.getTotalEnemigosAbatidos() + abatidos);
             jugador.setRespawn(true);
         }
     }

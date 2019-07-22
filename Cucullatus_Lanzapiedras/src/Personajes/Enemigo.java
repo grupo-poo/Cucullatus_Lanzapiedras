@@ -97,7 +97,6 @@ public class Enemigo extends Personaje{
                 if (ObstaculoDirHorizontal(Clon, obs.getRectangulo())) {
                     viaLibre = false;
                     x = obs.getX() - ancho;
-                    break;
                 }
             }
         }
@@ -114,7 +113,6 @@ public class Enemigo extends Personaje{
                 if (ObstaculoDirHorizontal(Clon, obs.getRectangulo())) {
                     viaLibre = false;
                     x = obs.getX() + obs.getAncho();
-                    break;
                 }
             }
         }
@@ -131,7 +129,6 @@ public class Enemigo extends Personaje{
                 if (ObstaculoDirVertical(Clon, obs.getRectangulo())) {
                     viaLibre = false;
                     y = obs.getY() + obs.getAlto();
-                    break;
                 }
             }
         }
@@ -148,7 +145,6 @@ public class Enemigo extends Personaje{
                 if (ObstaculoDirVertical(Clon, obs.getRectangulo())) {
                     viaLibre = false;
                     y = obs.getY() - alto;
-                    break;
                 }
             }
         }
