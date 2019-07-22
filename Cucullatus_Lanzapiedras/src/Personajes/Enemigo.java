@@ -7,7 +7,6 @@ package Personajes;
 
 import Escenario.ObjetoInerte;
 import Escenario.Piedra;
-import Nucleo.Debug;
 import Nucleo.ObjetoEscenario;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
@@ -217,7 +216,8 @@ public class Enemigo extends ObjetoEscenario{
     
     private void crearPiedra() {
         if (piedra == null) {
-            piedra = new Piedra(x, y + 20, 40, 30);
+            Image imagen = new Image("Nucleo/Recursos/Piedra/Piedra.png");
+            piedra = new Piedra(imagen, x, y + 20);
         }
     }
     

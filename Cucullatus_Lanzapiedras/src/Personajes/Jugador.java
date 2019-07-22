@@ -26,12 +26,12 @@ public class Jugador extends ObjetoEscenario{
     private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
     private Image imagen;
-    private int vida=10;//Vida inicial del jugador
-    private int piedras=0; //Cantidad de piedras del jugador
+    private int vida = 10;//Vida inicial del jugador
+    private int piedras = 0; //Cantidad de piedras del jugador
+    private int aerosoles = 0; //Cantidad de piedras del jugador
     private Piedra piedra;
     private boolean direccion; // Si es true el jugador mira a la derecha.
     private boolean muerto;
-    private boolean respawn;
     
     // Auxiliares para la gravedad.
     private int countAuxForGravity = 0; // Contador auxiliar para la gravedad.
@@ -90,18 +90,22 @@ public class Jugador extends ObjetoEscenario{
      * @param obstaculos
      * @param enemigos
      */
-    public void actualizar(ArrayList<ObjetoInerte> obstaculos, ArrayList<Enemigo> enemigos) {
+    public void actualizar(ArrayList<ObjetoInerte> obstaculos, ArrayList<Enemigo> enemigos,
+            ArrayList<Pared> paredes, ArrayList<Piedra> piedras, ArrayList<Piedra> aerosoles) {
         velocidadHorizontal = desplazamiento;
         int distCrit = determinarDistanciaCritica();
         mover(obstaculos); // Aquí movemos al jugador.
         morir(enemigos);
-        boolean SobrepasadoDistCrit = respawn1(distCrit, enemigos);
+        respawn1(distCrit, enemigos, paredes, piedras, aerosoles);
         velocidadHorizontal = desplazamiento - velocidadHorizontal;
-        respawn2(SobrepasadoDistCrit);
+        respawn2();
         animacion(); // Aquí se ejecuta la animación del jugador.
         lanzarPiedra(obstaculos);
         eliminarPiedraSiSaleDeEscenario();
         abatir(enemigos);
+        graffitear(paredes);
+        if (recogerObjeto(piedras)) { this.piedras++; }
+        if (recogerObjeto(aerosoles)) { this.aerosoles++; }
 
         //////////////////////////////////////////
         /**
@@ -113,7 +117,8 @@ public class Jugador extends ObjetoEscenario{
         Debug.lapiz.fillText("Velocidad: " + velocidadHorizontal, 20, 66);
         Debug.lapiz.fillText("Distancia Critica: " + distanciaCritica, 20, 78);
         Debug.lapiz.fillText("Aceleracion: " + aceleracion, 20, 90);
-        Debug.lapiz.fillText("Piedras: " + piedras, 20, 102);
+        Debug.lapiz.fillText("Piedras: " + this.piedras, 20, 102);
+        Debug.lapiz.fillText("Aerosoles: " + this.aerosoles, 20, 126);
         //////////////////////////////////////////
     }
     
@@ -134,6 +139,18 @@ public class Jugador extends ObjetoEscenario{
     private void revivirEnemigo(ArrayList<Enemigo> enemigos) {
         for (Enemigo enemigo : enemigos) {
             enemigo.setMuerto(false);
+        }
+    }
+    
+    private void desgraffitear(ArrayList<Pared> paredes) {
+        for (Pared pared : paredes) {
+            pared.setIsGraffiteada(false);
+        }
+    }
+    
+    private void reaparecerObjetos(ArrayList<Piedra> piedras) {
+        for (Piedra piedra : piedras) {
+            piedra.setVisible(true);
         }
     }
     
@@ -218,7 +235,8 @@ public class Jugador extends ObjetoEscenario{
     
     private void crearPiedra() {
         if (piedra == null) {
-            piedra = new Piedra(x, y + 20, 40, 30);
+            Image imagen = new Image("Nucleo/Recursos/Piedra/Piedra.png");
+            piedra = new Piedra(imagen, x, y + 20);
         }
     }
     
@@ -577,27 +595,29 @@ public class Jugador extends ObjetoEscenario{
         }
     }
     
-    public void Graffitear(ArrayList<Pared> paredes){
+    public void graffitear(ArrayList<Pared> paredes){
         for(Pared pared: paredes){
-            if (Teclado.isVANDALIZAR()) {
+            if (Teclado.isVANDALIZAR() && !pared.isIsGraffiteada() && aerosoles > 0) {
                 if((pared.getX() + pared.getAncho() >= x + ancho && pared.getX() < x
                         && pared.getY() + pared.getAlto() >= y + alto && pared.getY() <= y)){//Se puede generalizar para todo obstáculo que tenga encima la pared
-                    Image imagen = new Image("Nucleo/Recursos/Paredmodificada.png");
-                    pared.setImagen(imagen);
+                    pared.setIsGraffiteada(true);
+                    aerosoles--;
                 }
             }
         }
     }
     
-    public void RecogerPiedra(ArrayList<Piedra> piedras){
+    public boolean recogerObjeto(ArrayList<Piedra> piedras){
+        boolean recoger = false;
         for(Piedra piedra: piedras){
             if (piedra.isVisible()) {
                 if (piedra.getRectangulo().intersects(this.getRectangulo().getBoundsInLocal())) {
-                    this.piedras++;
+                    recoger = true;
                     piedra.setVisible(false);
                 }
             }
         }
+        return recoger;
     }
     
     private void morir(ArrayList<Enemigo> enemigos) {
@@ -620,26 +640,26 @@ public class Jugador extends ObjetoEscenario{
      * @param distCritica
      * @return true si se ha superado la distancia critica y se a caido por un abismo.
      */
-    private boolean respawn1(int distCritica, ArrayList<Enemigo> enemigos){
-        boolean seHaSuperadoLaDistanciaCritica = false; 
+    private void respawn1(int distCritica, ArrayList<Enemigo> enemigos,
+            ArrayList<Pared> paredes, ArrayList<Piedra> piedras, ArrayList<Piedra> aerosoles){
         if (muerto) {
             if (distanciaCritica) {
                 x = distCritica;
-                seHaSuperadoLaDistanciaCritica = true;
             } else {
                 x = 40;
             }
             y = 200;
             desplazamiento = x;
-            muerto = false;
-            respawn = true;
             vida--;
             piedra = null;
-            piedras = 0;
+            this.piedras = 0;
+            this.aerosoles = 0;
             abortarLanzamiento();
             revivirEnemigo(enemigos);
+            desgraffitear(paredes);
+            reaparecerObjetos(piedras);
+            reaparecerObjetos(aerosoles);
         }
-        return seHaSuperadoLaDistanciaCritica;
     }
     
     /**
@@ -651,13 +671,14 @@ public class Jugador extends ObjetoEscenario{
      * 
      * Sirve para hacer respawn (el jugador regresa a la posición incial),
      * pero solo cuando se ha superado la distancia critica..
-     * 
-     * @param seHaSuperadoLaDistanciaCritica 
      */
-    private void respawn2(boolean seHaSuperadoLaDistanciaCritica) {
-        if (seHaSuperadoLaDistanciaCritica) {
-            x = 40;
-            desplazamiento = x;
+    private void respawn2() {
+        if (muerto) {
+            if (distanciaCritica) {
+                x = 40;
+                desplazamiento = x;
+            }
+            muerto = false;
         }
     }
      
@@ -760,14 +781,6 @@ public class Jugador extends ObjetoEscenario{
 
     public void setMuerto(boolean muerto) {
         this.muerto = muerto;
-    }
-
-    public boolean isRespawn() {
-        return respawn;
-    }
-
-    public void setRespawn(boolean respawn) {
-        this.respawn = respawn;
     }
     
 }

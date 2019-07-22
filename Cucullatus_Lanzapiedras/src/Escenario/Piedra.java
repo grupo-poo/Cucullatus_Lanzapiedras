@@ -25,18 +25,26 @@ public class Piedra extends ObjetoEscenario{
     private boolean visible = true;
     
     
-    public Piedra(int x, int y, int ancho, int alto){
-        this.x=x;
-        this.y=y;
-        this.ancho=ancho;
-        this.alto=alto;
-        this.imagen=new Image("Nucleo/Recursos/Piedra/Piedra.png");
+    public Piedra(Image imagen){
+        this.imagen = imagen;
+        this.ancho = 40;
+        this.alto = 30;
     }
     
-    public Piedra(int x, int y){
-        this.x=x;
-        this.y=y;
-        this.imagen=new Image("Nucleo/Recursos/Piedra/Piedra.png");
+    public Piedra(Image imagen, int x, int y){
+        this.imagen = imagen;
+        this.x = x;
+        this.y = y;
+        this.ancho = 40;
+        this.alto = 30;
+    }
+    
+    public Piedra(Image imagen, int x, int y, int ancho, int alto){
+        this.imagen = imagen;
+        this.x = x;
+        this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
     }
     
     public void dibujar(GraphicsContext lapiz){

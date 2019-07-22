@@ -19,6 +19,7 @@ public class Pared {
     private int ancho, alto; // Dimensiones de la imagen del objeto.
     private int x, y; // Coordenadas del Objeto en la pantalla.
     private int xInit; // Coordemada x inicial (no cambia)
+    private boolean isGraffiteada;
     private Image imagen;
     
     public Pared(Image imagen) {
@@ -46,13 +47,26 @@ public class Pared {
     }
     
     public void dibujar(GraphicsContext lapiz) {
-        lapiz.drawImage(imagen, x, y, ancho, alto);
+        if (isGraffiteada) {
+            Image imagenGra = new Image("Nucleo/Recursos/Paredmodificada.png");
+            lapiz.drawImage(imagenGra, x, y, ancho, alto);
+        } else {
+            lapiz.drawImage(this.imagen, x, y, ancho, alto);
+        }
     }
     
     public void actualizar(Jugador jugador) {
         if (jugador.isDistanciaCritica()) {
             x -= jugador.getVelocidadHorizontal();
         }
+    }
+
+    public boolean isIsGraffiteada() {
+        return isGraffiteada;
+    }
+
+    public void setIsGraffiteada(boolean isGraffiteada) {
+        this.isGraffiteada = isGraffiteada;
     }
     
     public Rectangle getRectangulo() {

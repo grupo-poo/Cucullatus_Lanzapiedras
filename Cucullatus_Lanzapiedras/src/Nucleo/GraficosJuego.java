@@ -32,11 +32,16 @@ public class GraficosJuego extends Canvas {
     private ObjetoInerte obstaculo1_DePrueba;
     private ObjetoInerte obstaculo2_DePrueba;
     private ObjetoInerte obstaculo3_DePrueba;
+    private Pared pared1;
+    private Pared pared2;
+    private Pared pared3;
+    private Piedra piedra1;
+    private Piedra piedra2;
+    private Piedra aerosol1;
+    private Piedra aerosol2;
+    private Piedra aerosol3;
     private Enemigo enemigo1;
     private Enemigo enemigo2;
-    
-    private ArrayList<Piedra> piedras;
-    private ArrayList<Pared> paredes;
     
     private final int altoPantalla;
     private final int anchoPantalla;
@@ -47,8 +52,6 @@ public class GraficosJuego extends Canvas {
         super(anchoPantalla, altoPantalla);
         this.altoPantalla = (int) altoPantalla;
         this.anchoPantalla = (int) anchoPantalla;
-        paredes = new ArrayList<>();
-        piedras = new ArrayList<>();
         ejecutandose = true;
         prepararJuego();
     }
@@ -101,7 +104,6 @@ public class GraficosJuego extends Canvas {
         fondoDePrueba = new ObjetoInerte(imagen);
         fondoDePrueba.setAlto(altoPantalla);
         
-        
         // Se preparan los elementos del escenario
         imagen = new Image("Nucleo/Recursos/Mensaje.png");
         mensajeDePrueba = new ObjetoInerte(imagen, 100, 400, 300, 150);
@@ -122,9 +124,6 @@ public class GraficosJuego extends Canvas {
         suelo1_DePrueba.setCoordenadas(0, altoPantalla - altoPantalla / 9);
         suelo1_DePrueba.setDimensiones(anchoPantalla / 3, altoPantalla / 9);
         
-        //Piedra
-        añadirPiedra(suelo1_DePrueba.getX() + 400, suelo1_DePrueba.getY() - 30, 40, 30);
-        añadirPiedra(suelo1_DePrueba.getX() + 300, suelo1_DePrueba.getY() - 30, 40, 30);
         
         suelo2_DePrueba = new ObjetoInerte(imagen);
         suelo2_DePrueba.setX(suelo1_DePrueba.getX() + suelo1_DePrueba.getAncho() + 200);
@@ -151,10 +150,57 @@ public class GraficosJuego extends Canvas {
         obstaculo3_DePrueba.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() - 40);
         obstaculo3_DePrueba.setY(suelo2_DePrueba.getY() - obstaculo3_DePrueba.getAlto());
         
-        imagen = new Image("Nucleo/Recursos/Pared.png");
+        //Piedra
+        imagen = new Image("Nucleo/Recursos/Piedra/Piedra.png");
+        piedra1 = new Piedra(imagen);
+        piedra1.setX(suelo1_DePrueba.getX() + 250);
+        piedra1.setY(suelo1_DePrueba.getY() - piedra1.getAlto());
+        
+        piedra2 = new Piedra(imagen);
+        piedra2.setX(suelo1_DePrueba.getX() + 350);
+        piedra2.setY(suelo1_DePrueba.getY() - piedra2.getAlto());
+        
+        imagen = new Image("Nucleo/Recursos/Aerosol.png");
+        aerosol1 = new Piedra(imagen);
+        aerosol1.setAncho(20);
+        aerosol1.setAlto(60);
+        aerosol1.setX(suelo1_DePrueba.getX() + suelo1_DePrueba.getAncho() - aerosol1.getAncho());
+        aerosol1.setY(suelo1_DePrueba.getY() - aerosol1.getAlto());
+        
+        imagen = new Image("Nucleo/Recursos/Aerosol.png");
+        aerosol2 = new Piedra(imagen);
+        aerosol2.setAncho(20);
+        aerosol2.setAlto(60);
+        aerosol2.setX(ObjetoFlotanteDePrueba1.getX() + ObjetoFlotanteDePrueba1.getAncho() - aerosol2.getAncho());
+        aerosol2.setY(ObjetoFlotanteDePrueba1.getY() - aerosol2.getAlto());
+        
+        imagen = new Image("Nucleo/Recursos/Aerosol.png");
+        aerosol3 = new Piedra(imagen);
+        aerosol3.setAncho(20);
+        aerosol3.setAlto(60);
+        aerosol3.setX(obstaculo2_DePrueba.getX() + obstaculo2_DePrueba.getAncho() - aerosol3.getAncho());
+        aerosol3.setY(obstaculo2_DePrueba.getY() - aerosol3.getAlto());
         
         //Pared
-        añadirPared(imagen,suelo1_DePrueba.getX() + 160, suelo1_DePrueba.getY() - 90, 90,90);
+        imagen = new Image("Nucleo/Recursos/Pared.png");
+        pared1 = new Pared(imagen);
+        pared1.setAncho(90);
+        pared1.setAlto(90);
+        pared1.setX(suelo1_DePrueba.getX() + 100);
+        pared1.setY(suelo1_DePrueba.getY() - pared1.getAlto());
+        
+        pared2 = new Pared(imagen);
+        pared2.setAncho(pared1.getAncho());
+        pared2.setAlto(pared1.getAlto());
+        pared2.setX(pared1.getX() + pared1.getAncho() + 20);
+        pared2.setY(pared1.getY());
+        
+        pared3 = new Pared(imagen);
+        pared3.setAncho(pared1.getAncho());
+        pared3.setAlto(pared1.getAlto());
+        pared3.setX(pared2.getX() + pared1.getAncho() + 20);
+        pared3.setY(pared1.getY());
+        
     }
     
     /**
@@ -165,12 +211,14 @@ public class GraficosJuego extends Canvas {
 
         fondoDePrueba.dibujar(lapiz);
         Corazones.dibujar(lapiz, jugador.getVida());
-        for (Pared pared : paredes) {
-            pared.dibujar(lapiz);
-        }
-        for (Piedra piedra : piedras) {
-            piedra.dibujar(lapiz);
-        }
+        pared1.dibujar(lapiz);
+        pared2.dibujar(lapiz);
+        pared3.dibujar(lapiz);
+        piedra1.dibujar(lapiz);
+        piedra2.dibujar(lapiz);
+        aerosol1.dibujar(lapiz);
+        aerosol2.dibujar(lapiz);
+        aerosol3.dibujar(lapiz);
         mensajeDePrueba.dibujar(lapiz);
         mensaje2DePrueba.dibujar(lapiz);
         ObjetoFlotanteDePrueba1.dibujar(lapiz);
@@ -191,8 +239,6 @@ public class GraficosJuego extends Canvas {
          */
         new Debug(lapiz);
         Debug.lapiz.fillText("fondo: " + fondoDePrueba.getX(), 20, 114);
-        Debug.lapiz.fillText("Enemigo1 Muerto?: " + enemigo1.isMuerto(), 20, 126);
-        Debug.lapiz.fillText("Enemigo2 Muerto?: " + enemigo2.isMuerto(), 20, 138);
         //////////////////////////////////////////
     }
     
@@ -212,17 +258,33 @@ public class GraficosJuego extends Canvas {
         obstaculos.add(ObjetoFlotanteDePrueba1);
         obstaculos.add(ObjetoFlotanteDePrueba2);
         
+        ArrayList<Pared> paredes = new ArrayList<>(3);
+        paredes.add(pared1);
+        paredes.add(pared2);
+        paredes.add(pared3);
+        
         ArrayList<Enemigo> enemigos = new ArrayList<>();
         enemigos.add(enemigo1);
         enemigos.add(enemigo2);
         
-        for (Pared pared : paredes) {
-            pared.actualizar(jugador);
-        }
-        for (Piedra piedra : piedras) {
-            piedra.actualizar(jugador);
-        }
-        jugador.actualizar(obstaculos, enemigos);
+        ArrayList<Piedra> piedras = new ArrayList<>();
+        piedras.add(piedra1);
+        piedras.add(piedra2);
+        
+        ArrayList<Piedra> aerosoles = new ArrayList<>(3);
+        aerosoles.add(aerosol1);
+        aerosoles.add(aerosol2);
+        aerosoles.add(aerosol3);
+                
+        jugador.actualizar(obstaculos, enemigos, paredes, piedras, aerosoles);
+        pared1.actualizar(jugador);
+        pared2.actualizar(jugador);
+        pared3.actualizar(jugador);
+        piedra1.actualizar(jugador);
+        piedra2.actualizar(jugador);
+        aerosol1.actualizar(jugador);
+        aerosol2.actualizar(jugador);
+        aerosol3.actualizar(jugador);
         fondoDePrueba.actualizar(jugador);
         paredLimiteIzquierdo.actualizar(jugador);
         mensajeDePrueba.actualizar(jugador);
@@ -235,18 +297,12 @@ public class GraficosJuego extends Canvas {
         obstaculo3_DePrueba.actualizar(jugador);
         obstaculo1_DePrueba.actualizar(jugador);
         obstaculo2_DePrueba.actualizar(jugador);
-        jugador.Graffitear(paredes);
-        jugador.RecogerPiedra(piedras);
+        jugador.recogerObjeto(piedras);
         enemigo1.actualizar(jugador, obstaculos);
         enemigo2.actualizar(jugador, obstaculos);
-        if (jugador.isRespawn()) {
-            for (Piedra piedra : piedras) {
-                piedra.setVisible(true);
-                jugador.setRespawn(false);
-            }
-            if (jugador.getVida() == 0) {
-                ejecutandose = false;
-            }
+        
+        if (jugador.getVida() == 0) {
+            ejecutandose = false;
         }
     }
     
@@ -269,14 +325,6 @@ public class GraficosJuego extends Canvas {
 
     public boolean isEjecutandose() {
         return ejecutandose;
-    }
-    
-    public void añadirPared(Image imagen, int x, int y, int ancho, int alto){
-        paredes.add(new Pared(imagen, x, y, ancho, alto));
-    }
-    
-    public void añadirPiedra(int x, int y, int ancho, int alto){
-        piedras.add(new Piedra(x, y, ancho, alto));
     }
     
 }
