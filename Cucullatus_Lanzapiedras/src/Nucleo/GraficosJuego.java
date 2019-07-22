@@ -1,11 +1,7 @@
 package Nucleo;
 
-import Escenario.Corazones;
-import Escenario.ObjetoInerte;
-import Escenario.Pared;
-import Escenario.Piedra;
-import Personajes.Enemigo;
-import Personajes.Jugador;
+import Escenario.*;
+import Personajes.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
@@ -42,6 +38,7 @@ public class GraficosJuego extends Canvas {
     private Piedra aerosol3;
     private Enemigo enemigo1;
     private Enemigo enemigo2;
+    private Portal portal;
     
     private final int altoPantalla;
     private final int anchoPantalla;
@@ -87,7 +84,6 @@ public class GraficosJuego extends Canvas {
         enemigo2.setY(suelo3_DePrueba.getY() - enemigo2.getAlto());
         enemigo2.setAnimacion2(true);
         enemigo2.setLanzarPiedra(true);
-        
     }
     
     /**
@@ -98,13 +94,13 @@ public class GraficosJuego extends Canvas {
         // Se cargan la imagen del fondo
         Corazones.Setall(anchoPantalla/5,altoPantalla/500);
         
-        Image imagen = new Image("Nucleo/Recursos/fondo.png");
+        Image imagen = new Image("Nucleo/Recursos/Fondo.png");
         
-        // Se crea el fondo y se le añade la imagen 
+        //Se crea el fondo y se le añade la imagen 
         fondoDePrueba = new ObjetoInerte(imagen);
         fondoDePrueba.setAlto(altoPantalla);
         
-        // Se preparan los elementos del escenario
+        //Se preparan los elementos del escenario
         imagen = new Image("Nucleo/Recursos/Mensaje.png");
         mensajeDePrueba = new ObjetoInerte(imagen, 100, 400, 300, 150);
         
@@ -201,6 +197,13 @@ public class GraficosJuego extends Canvas {
         pared3.setX(pared2.getX() + pared1.getAncho() + 20);
         pared3.setY(pared1.getY());
         
+        //Transportador
+        imagen = new Image("Nucleo/Recursos/Portal.png");
+        portal = new Portal(imagen);
+        portal.setAncho(jugador.getAncho());
+        portal.setAlto(jugador.getAlto());
+        portal.setX(jugador.getX());
+        portal.setY(suelo1_DePrueba.getY() - portal.getAlto());
     }
     
     /**
@@ -231,6 +234,7 @@ public class GraficosJuego extends Canvas {
         obstaculo2_DePrueba.dibujar(lapiz);
         enemigo1.dibujar(lapiz,jugador);
         enemigo2.dibujar(lapiz,jugador);
+        portal.dibujar(lapiz);
         jugador.dibujar(lapiz);
         
         //////////////////////////////////////////
@@ -277,6 +281,7 @@ public class GraficosJuego extends Canvas {
         aerosoles.add(aerosol3);
                 
         jugador.actualizar(obstaculos, enemigos, paredes, piedras, aerosoles);
+        portal.actualizar(jugador, paredes);
         pared1.actualizar(jugador);
         pared2.actualizar(jugador);
         pared3.actualizar(jugador);
