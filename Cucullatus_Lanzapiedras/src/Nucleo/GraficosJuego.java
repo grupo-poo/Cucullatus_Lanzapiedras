@@ -180,8 +180,10 @@ public class GraficosJuego extends Canvas {
         if (portal.isCambiarNivel()) {
             nivel++;
             cargarEsceneraio();
-            int abatidos = jugador.getEnmigosAbatidosPorNivel();
-            jugador.setTotalEnemigosAbatidos(jugador.getTotalEnemigosAbatidos() + abatidos);
+            int valor = jugador.getEnmigosAbatidosPorNivel();
+            jugador.setTotalEnemigosAbatidos(jugador.getTotalEnemigosAbatidos() + valor);
+            valor = jugador.getPuntuacionPorNivel();
+            jugador.setPuntuacionTotal(jugador.getPuntuacionTotal() + valor);
             jugador.setRespawn(true);
         }
     }

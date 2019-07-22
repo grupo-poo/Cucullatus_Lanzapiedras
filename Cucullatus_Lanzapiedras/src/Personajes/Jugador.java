@@ -28,6 +28,8 @@ public class Jugador extends Personaje{
     private int totalEnemigosAbatidos = 0;
     private int aerosolesFaltantes = 3;
     private int murosFaltantes = 3;
+    private int puntuacionPorNivel = 0;
+    private int puntuacionTotal = 0;
     private String cronometro;
     
     // Auxiliares para el cronometro
@@ -65,7 +67,8 @@ public class Jugador extends Personaje{
         lapiz.fillText("Muros que faltan por graffitear: " + murosFaltantes, 20, 44);
         lapiz.fillText("Enemigos Abatidos: " + (enmigosAbatidosPorNivel + totalEnemigosAbatidos), 20, 58);
         lapiz.fillText("Aerosoles Faltantes: " + aerosolesFaltantes, 20, 72);
-        lapiz.fillText("Piedras: " + piedras, 20, 86);
+        lapiz.fillText("Puntuación: " + (puntuacionTotal + puntuacionPorNivel), 20, 86);
+        lapiz.fillText("Piedras: " + piedras, 20, 100);
     }
     
     /**
@@ -548,18 +551,20 @@ public class Jugador extends Personaje{
                     pared.setIsGraffiteada(true);
                     aerosoles--;
                     murosFaltantes--;
+                    puntuacionPorNivel += 10;
                 }
             }
         }
     }
     
-    public boolean recogerObjeto(ObjetoRecogible[] piedras){
+    public boolean recogerObjeto(ObjetoRecogible[] objetos){
         boolean recoger = false;
-        for(ObjetoRecogible piedra: piedras){
-            if (piedra.isVisible()) {
-                if (piedra.getRectangulo().intersects(this.getRectangulo().getBoundsInLocal())) {
+        for(ObjetoRecogible objeto: objetos){
+            if (objeto.isVisible()) {
+                if (objeto.getRectangulo().intersects(this.getRectangulo().getBoundsInLocal())) {
                     recoger = true;
-                    piedra.setVisible(false);
+                    objeto.setVisible(false);
+                    puntuacionPorNivel += 5;
                 }
             }
         }
@@ -603,6 +608,7 @@ public class Jugador extends Personaje{
             this.enmigosAbatidosPorNivel = 0;
             this.aerosolesFaltantes = 3;
             this.murosFaltantes = 3;
+            this.puntuacionPorNivel = 0;
             abortarLanzamiento();
             revivirEnemigo(enemigos);
             desgraffitear(paredes);
@@ -640,6 +646,7 @@ public class Jugador extends Personaje{
                     piedra = null;
                     piedras--;
                     enmigosAbatidosPorNivel++;
+                    puntuacionPorNivel += 15;
                     abortarLanzamiento();
                     break;
                 }
@@ -778,6 +785,30 @@ public class Jugador extends Personaje{
 
     public int getMurosFaltantes() {
         return murosFaltantes;
+    }
+
+    public int getPuntuacionPorNivel() {
+        return puntuacionPorNivel;
+    }
+
+    public void setPuntuacionPorNivel(int puntuacionPorNivel) {
+        this.puntuacionPorNivel = puntuacionPorNivel;
+    }
+
+    public int getPuntuacionTotal() {
+        return puntuacionTotal;
+    }
+
+    public void setPuntuacionTotal(int puntuacionTotal) {
+        this.puntuacionTotal = puntuacionTotal;
+    }
+
+    public int getSegundos() {
+        return segundos;
+    }
+
+    public void setSegundos(int segundos) {
+        this.segundos = segundos;
     }
     
 }
