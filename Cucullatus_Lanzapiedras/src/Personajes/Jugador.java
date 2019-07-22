@@ -24,6 +24,8 @@ public class Jugador extends Personaje{
     private int vida = 10; //Vida inicial del jugador
     private int piedras = 0; //Cantidad de piedras del jugador
     private int aerosoles = 0; //Cantidad de piedras del jugador
+    private int enmigosAbatidosPorNivel = 0;
+    private int totalEnemigosAbatidos = 0;
     
     // Auxiliares para la animación.
     private int secuencia = 1;//Numero de imagenes, empieza por 1
@@ -49,6 +51,7 @@ public class Jugador extends Personaje{
             piedra.dibujar(lapiz);
         }
         lapiz.drawImage(imagen, x, y, ancho, alto);
+        lapiz.fillText("Enemigos Abatidos: " + (enmigosAbatidosPorNivel + totalEnemigosAbatidos), 400, 100, 300);
     }
     
     /**
@@ -582,6 +585,7 @@ public class Jugador extends Personaje{
             this.piedra = null;
             this.piedras = 0;
             this.aerosoles = 0;
+            this.enmigosAbatidosPorNivel = 0;
             abortarLanzamiento();
             revivirEnemigo(enemigos);
             desgraffitear(paredes);
@@ -618,6 +622,7 @@ public class Jugador extends Personaje{
                     enemigo.setMuerto(true);
                     piedra = null;
                     piedras--;
+                    enmigosAbatidosPorNivel++;
                     abortarLanzamiento();
                     break;
                 }
@@ -711,5 +716,20 @@ public class Jugador extends Personaje{
     public void setRespawn(boolean respawn) {
         this.respawn = respawn;
     }
-    
+
+    public int getEnmigosAbatidosPorNivel() {
+        return enmigosAbatidosPorNivel;
+    }
+
+    public void setEnmigosAbatidosPorNivel(int enmigosAbatidosPorNivel) {
+        this.enmigosAbatidosPorNivel = enmigosAbatidosPorNivel;
+    }
+
+    public int getTotalEnemigosAbatidos() {
+        return totalEnemigosAbatidos;
+    }
+
+    public void setTotalEnemigosAbatidos(int totalEnemigosAbatidos) {
+        this.totalEnemigosAbatidos = totalEnemigosAbatidos;
+    }
 }

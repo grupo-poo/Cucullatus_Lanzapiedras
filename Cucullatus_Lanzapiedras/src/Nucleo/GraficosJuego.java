@@ -177,9 +177,11 @@ public class GraficosJuego extends Canvas {
         if (jugador.getVida() == 0) {
             ejecutandose = false;
         }
-        if (portal.isTransportar()) {
+        if (portal.isCambiarNivel()) {
             nivel++;
             cargarEsceneraio();
+            int abatidos = jugador.getEnmigosAbatidosPorNivel();
+            jugador.setTotalEnemigosAbatidos(abatidos);
             jugador.setRespawn(true);
         }
     }

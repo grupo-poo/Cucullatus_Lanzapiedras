@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 public class Portal extends ObjetoInerte{
     
     private boolean abrirPortal;
-    private boolean transportar;
+    private boolean cambiarNivel;
     
     public Portal(Image imagen) {
         super(imagen);
@@ -30,7 +30,7 @@ public class Portal extends ObjetoInerte{
             x -= jugador.getVelocidadHorizontal();
         }
         abrirPortal = estadoTransportacion(paredes, (byte)2);
-        transportar = abrirPortal && intersectJugador(jugador);
+        cambiarNivel = abrirPortal && intersectJugador(jugador);
     }
     
     private boolean estadoTransportacion(Pared[] paredes, byte arraySize) {
@@ -43,12 +43,12 @@ public class Portal extends ObjetoInerte{
         return getRectangulo().intersects(jugador.getRectangulo().getBoundsInLocal());
     }
 
-    public boolean isTransportar() {
-        return transportar;
+    public boolean isCambiarNivel() {
+        return cambiarNivel;
     }
 
-    public void setTransportar(boolean transportar) {
-        this.transportar = transportar;
+    public void setCambiarNivel(boolean cambiarNivel) {
+        this.cambiarNivel = cambiarNivel;
     }
     
 }
