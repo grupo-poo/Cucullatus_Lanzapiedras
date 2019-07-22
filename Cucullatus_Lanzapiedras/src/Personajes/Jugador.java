@@ -20,6 +20,7 @@ public class Jugador extends Personaje{
     private int velocidadHorizontal; // pixeles que recorre horizontalmente en tiempo real.
     private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
+    private boolean respawn; // true cuando esté en el punto donde x no cambia.
     private int vida = 10; //Vida inicial del jugador
     private int piedras = 0; //Cantidad de piedras del jugador
     private int aerosoles = 0; //Cantidad de piedras del jugador
@@ -569,15 +570,15 @@ public class Jugador extends Personaje{
      */
     private void respawn1(int distCritica, Enemigo[] enemigos,
             Pared[] paredes, ObjetoRecogible[] piedras, ObjetoRecogible[] aerosoles){
-        if (muerto) {
+        if (muerto || respawn) {
             if (distanciaCritica) {
                 this.x = distCritica;
             } else {
                 this.x = 40;
             }
+            if (muerto) this.vida--;
             this.y = 200;
             this.desplazamiento = x;
-            this.vida--;
             this.piedra = null;
             this.piedras = 0;
             this.aerosoles = 0;
@@ -600,12 +601,13 @@ public class Jugador extends Personaje{
      * pero solo cuando se ha superado la distancia critica..
      */
     private void respawn2() {
-        if (muerto) {
+        if (muerto || respawn) {
             if (distanciaCritica) {
                 x = 40;
                 desplazamiento = x;
             }
             muerto = false;
+            respawn = false;
         }
     }
     
@@ -700,6 +702,14 @@ public class Jugador extends Personaje{
 
     public void setVida(int vida) {
         this.vida = vida;
+    }
+
+    public boolean isRespawn() {
+        return respawn;
+    }
+
+    public void setRespawn(boolean respawn) {
+        this.respawn = respawn;
     }
     
 }
