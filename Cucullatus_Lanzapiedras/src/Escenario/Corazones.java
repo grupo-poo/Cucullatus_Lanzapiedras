@@ -20,20 +20,16 @@ public class Corazones {
     private static Image Imagen;
     
     public static void dibujar(GraphicsContext lapiz, int vida){
-        
         Image Corazones=new Image("Nucleo/Recursos/Corazones/Heart"+vida+".png");
-        Imagen=Corazones;
+        Imagen = Corazones;
         lapiz.drawImage(Imagen, X, Y,Imagen.getWidth()/2,Imagen.getHeight()/2);
-        
     }
-    
     
     public static void Setall(int x, int y){
         X = x;
         Y = y;
      }
     
-
     public static int getAltura() {
         return Altura;
     }

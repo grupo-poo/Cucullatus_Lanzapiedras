@@ -1,70 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Personajes;
 
 import Escenario.ObjetoInerte;
-import Escenario.Piedra;
-import Nucleo.ObjetoEscenario;
+import Escenario.ObjetoRecogible;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
 /**
- *
  * @author diegocarvajal
+ * @author Milton Lenis
  */
-public class Enemigo extends ObjetoEscenario{
-   private byte pasos;   // Número de pixeles que debe recorrer por frame.
-   
-    private final int altoPantalla;
-    private final int anchoPantalla;
-    private int ancho, alto; // Dimensiones de la imagen del Jugador.
-    private int x, y; // Coordenadas del jugador en la pantalla.
+public class Enemigo extends Personaje{
     
-    private Image imagen;
-    private boolean muerto;
+    private final int anchoPantalla;
+    
     private boolean moverse;
-    private boolean direccion; // Si es true el jugador mira a la derecha.
     private boolean animacion1;
     private boolean animacion2;
     
-    private Piedra piedra;
     private boolean lanzarPiedra;
-    
-    // Direcciones a las que la piedra es lanzada.
-    private boolean piedraDerecha = false;
-    private boolean piedraIzquierda = false;
-    
-    // Auxiliares para la gravedad.
-    private int countAuxForGravity = 0; // Contador auxiliar para la gravedad.
-    private int aceleracion = -1; // cambio de la velocidad con respecto a cada frame.
-    private int velocidadVertical; // pixeles que recorre verticalmente en tiempo real
-    
-    private int secuencia = 1;//Numero de imagenes, empieza por 1
-    private int cuenta= 0;//Ayuda a controlar la cantidad de veces que se pintan las imágenes
 
-    public Enemigo(int anchoPantalla, int altoPantalla) {
-        this.altoPantalla = altoPantalla;
+    public Enemigo(int anchoPantalla) {
         this.anchoPantalla = anchoPantalla;
         this.imagen=new Image("Nucleo/Recursos/Enemigo/Enemigo.png");
         this.ancho = 45;
         this.alto = 85;
-    }
-    
-    public Enemigo(int x, int y, int ancho, int alto, int vidaInicial, int anchoPantalla, int altoPantalla) {
-        this.altoPantalla = altoPantalla;
-        this.anchoPantalla = anchoPantalla;
-        this.imagen=new Image("Nucleo/Recursos/Enemigo/Enemigo.png");
-        this.ancho = ancho;
-        this.alto = alto;
-        this.x = x;
-        this.y = y;
-        direccion = true;
-        velocidadVertical = 1;
     }
     
     public void actualizar(Jugador jugador, ArrayList<ObjetoInerte> obstaculos) {
@@ -79,7 +40,8 @@ public class Enemigo extends ObjetoEscenario{
         }
     }
     
-    public void dibujar(GraphicsContext lapiz, Jugador jugador) {
+   @Override
+    public void dibujar(GraphicsContext lapiz) {
         if(isVisible()){
             lapiz.drawImage(imagen, x, y, ancho, alto);
         }
@@ -214,13 +176,6 @@ public class Enemigo extends ObjetoEscenario{
         }
     }
     
-    private void crearPiedra() {
-        if (piedra == null) {
-            Image imagen = new Image("Nucleo/Recursos/Piedra/Piedra.png");
-            piedra = new Piedra(imagen, x, y + 20);
-        }
-    }
-    
     private void desplazarPiedraDerecha(ArrayList<ObjetoInerte> obstaculos, Jugador jugador) {
         if (piedraDerecha) {
             piedra.actualizar(jugador);
@@ -241,21 +196,8 @@ public class Enemigo extends ObjetoEscenario{
         }
     }
     
-    public void eliminarPiedraSiSaleDeEscenario() {
-        if (piedra != null) {
-            if (isFueraDeEscenario(piedra)) {
-                abortarLanzamiento();
-                piedra = null;
-            }
-        }
-    }
-    
-    private void abortarLanzamiento() {
-        piedraDerecha = false;
-        piedraIzquierda = false;
-    }
-    
-    private boolean isFueraDeEscenario(Piedra piedra) {
+    @Override
+    protected boolean isFueraDeEscenario(ObjetoRecogible piedra) {
         return piedra.getX() > anchoPantalla || piedra.getX() + piedra.getAncho() < 0;
     }
     
@@ -300,7 +242,8 @@ public class Enemigo extends ObjetoEscenario{
      * @return Devuelve true si el jugador intercepta con algo debajo de él.
      * @author Milton Lenis
      */
-    private boolean gravedad(ArrayList<ObjetoInerte> obstaculos) {
+   @Override
+    protected boolean gravedad(ArrayList<ObjetoInerte> obstaculos) {
         if(countAuxForGravity == 5) {
             countAuxForGravity = 0;
             velocidadVertical++;
@@ -331,7 +274,8 @@ public class Enemigo extends ObjetoEscenario{
      * @param obstaculos array de obstaculos.
      * @author Milton Lenis
      */
-    private void saltar(ArrayList<ObjetoInerte> obstaculos, int alturaDeSalto) {
+   @Override
+    protected void saltar(ArrayList<ObjetoInerte> obstaculos, int alturaDeSalto) {
         if (aceleracion >= 0) {
             boolean hayAlgoArriba = !desplazarseArriba(obstaculos, alturaDeSalto*3);
             aceleracion = alturaDeSalto - velocidadVertical;
@@ -340,77 +284,6 @@ public class Enemigo extends ObjetoEscenario{
                 aceleracion = -1;
             }
         }
-    }
-    
-   @Override
-    public Rectangle getRectangulo() {
-        return new Rectangle(x, y, ancho, alto);
-    }
-
-    public boolean isMuerto() {
-        return muerto;
-    }
-
-    public void setMuerto(boolean muerto) {
-        this.muerto = muerto;
-    }
-
-    public int getAncho() {
-        return ancho;
-    }
-
-    public void setAncho(int ancho) {
-        this.ancho = ancho;
-    }
-
-    public int getAlto() {
-        return alto;
-    }
-
-    public void setAlto(int alto) {
-        this.alto = alto;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public Image getImagen() {
-        return imagen;
-    }
-
-    public void setImagen(Image imagen) {
-        this.imagen = imagen;
-    }
-    
-    public void setCoordenadas(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-    
-    public void setDimensiones(int ancho, int alto) {
-        this.ancho = ancho;
-        this.alto = alto;
-    }
-
-    public boolean isDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(boolean direccion) {
-        this.direccion = direccion;
     }
 
     public boolean isAnimacion1() {

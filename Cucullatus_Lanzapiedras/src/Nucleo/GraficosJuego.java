@@ -18,7 +18,7 @@ public class GraficosJuego extends Canvas {
     private Jugador jugador;
     private ObjetoInerte paredLimiteIzquierdo;
     private ObjetoInerte fondoDePrueba;
-    private ObjetoInerte mensajeDePrueba;
+    private ObjetoInerte mensaje1DePrueba;
     private ObjetoInerte mensaje2DePrueba;
     private ObjetoInerte ObjetoFlotanteDePrueba1;
     private ObjetoInerte ObjetoFlotanteDePrueba2;
@@ -31,11 +31,11 @@ public class GraficosJuego extends Canvas {
     private Pared pared1;
     private Pared pared2;
     private Pared pared3;
-    private Piedra piedra1;
-    private Piedra piedra2;
-    private Piedra aerosol1;
-    private Piedra aerosol2;
-    private Piedra aerosol3;
+    private ObjetoRecogible piedra1;
+    private ObjetoRecogible piedra2;
+    private ObjetoRecogible aerosol1;
+    private ObjetoRecogible aerosol2;
+    private ObjetoRecogible aerosol3;
     private Enemigo enemigo1;
     private Enemigo enemigo2;
     private Portal portal;
@@ -74,12 +74,12 @@ public class GraficosJuego extends Canvas {
     }
     
     private void cargarEnemigos() {
-        enemigo1 = new Enemigo(anchoPantalla, altoPantalla);
+        enemigo1 = new Enemigo(anchoPantalla);
         enemigo1.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() - obstaculo3_DePrueba.getAncho() - enemigo1.getAncho() - 1);
         enemigo1.setY(suelo2_DePrueba.getY() - enemigo1.getAlto());
         enemigo1.setAnimacion1(true);
         
-        enemigo2 = new Enemigo(anchoPantalla, altoPantalla);
+        enemigo2 = new Enemigo(anchoPantalla);
         enemigo2.setX(suelo3_DePrueba.getX() + (suelo3_DePrueba.getAncho() / 2));
         enemigo2.setY(suelo3_DePrueba.getY() - enemigo2.getAlto());
         enemigo2.setAnimacion2(true);
@@ -102,76 +102,100 @@ public class GraficosJuego extends Canvas {
         
         //Se preparan los elementos del escenario
         imagen = new Image("Nucleo/Recursos/Mensaje.png");
-        mensajeDePrueba = new ObjetoInerte(imagen, 100, 400, 300, 150);
+        mensaje1DePrueba = new ObjetoInerte(imagen);
+        mensaje1DePrueba.setAncho(300);
+        mensaje1DePrueba.setAlto(150);
+        mensaje1DePrueba.setX(100);
+        mensaje1DePrueba.setY(400);
         
         imagen = new Image("Nucleo/Recursos/Mensaje2.png");
-        mensaje2DePrueba = new ObjetoInerte(imagen, 100, 250, 150, 140);
+        mensaje2DePrueba = new ObjetoInerte(imagen);
+        mensaje2DePrueba.setAncho(150);
+        mensaje2DePrueba.setAlto(140);
+        mensaje2DePrueba.setX(100);
+        mensaje2DePrueba.setY(250);
         
         imagen = new Image("Nucleo/Recursos/Madera.png");
         paredLimiteIzquierdo = new ObjetoInerte(imagen); // borde para que no caiga
-        paredLimiteIzquierdo.setDimensiones(1, altoPantalla);
-        paredLimiteIzquierdo.setCoordenadas(-1, 0);
+        paredLimiteIzquierdo.setAncho(1);
+        paredLimiteIzquierdo.setAlto(altoPantalla);
+        paredLimiteIzquierdo.setX(-1);
+        paredLimiteIzquierdo.setY(0);
         
-        ObjetoFlotanteDePrueba1 = new ObjetoInerte(imagen, 502, 425, 47, 40);
+        ObjetoFlotanteDePrueba1 = new ObjetoInerte(imagen);
+        ObjetoFlotanteDePrueba1.setAncho(47);
+        ObjetoFlotanteDePrueba1.setAlto(40);
+        ObjetoFlotanteDePrueba1.setX(502);
+        ObjetoFlotanteDePrueba1.setY(425);
         
-        ObjetoFlotanteDePrueba2 = new ObjetoInerte(imagen, 502, 202, 94, 40);
+        ObjetoFlotanteDePrueba2 = new ObjetoInerte(imagen);
+        ObjetoFlotanteDePrueba2.setAlto(40);
+        ObjetoFlotanteDePrueba2.setAncho(94);
+        ObjetoFlotanteDePrueba2.setX(502);
+        ObjetoFlotanteDePrueba2.setY(202);
         
         suelo1_DePrueba = new ObjetoInerte(imagen);
-        suelo1_DePrueba.setCoordenadas(0, altoPantalla - altoPantalla / 9);
-        suelo1_DePrueba.setDimensiones(anchoPantalla / 3, altoPantalla / 9);
-        
+        suelo1_DePrueba.setAncho(anchoPantalla / 3);
+        suelo1_DePrueba.setAlto(altoPantalla / 9);
+        suelo1_DePrueba.setX(0);
+        suelo1_DePrueba.setY(altoPantalla - altoPantalla / 9);
         
         suelo2_DePrueba = new ObjetoInerte(imagen);
         suelo2_DePrueba.setX(suelo1_DePrueba.getX() + suelo1_DePrueba.getAncho() + 200);
         suelo2_DePrueba.setY(suelo1_DePrueba.getY());
-        suelo2_DePrueba.setDimensiones(anchoPantalla + 100 - suelo2_DePrueba.getX() , 180);
+        suelo2_DePrueba.setAncho(anchoPantalla + 100 - suelo2_DePrueba.getX());
+        suelo2_DePrueba.setAlto(180);
         
         suelo3_DePrueba = new ObjetoInerte(imagen);
-        suelo3_DePrueba.setDimensiones(suelo2_DePrueba.getAncho(), suelo2_DePrueba.getAlto());
+        suelo3_DePrueba.setAncho(suelo2_DePrueba.getAncho());
+        suelo3_DePrueba.setAlto(suelo2_DePrueba.getAlto());
         suelo3_DePrueba.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() + 210);
         suelo3_DePrueba.setY(suelo2_DePrueba.getY());
         
         obstaculo1_DePrueba = new ObjetoInerte(imagen);
-        obstaculo1_DePrueba.setDimensiones(150, 300);
+        obstaculo1_DePrueba.setAncho(150);
+        obstaculo1_DePrueba.setAlto(300);
         obstaculo1_DePrueba.setX(850);
         obstaculo1_DePrueba.setY(suelo1_DePrueba.getY() - obstaculo1_DePrueba.getAlto());
         
         obstaculo2_DePrueba = new ObjetoInerte(imagen);
-        obstaculo2_DePrueba.setDimensiones(150, 40);
+        obstaculo2_DePrueba.setAncho(150);
+        obstaculo2_DePrueba.setAlto(40);
         obstaculo2_DePrueba.setX(800);         
         obstaculo2_DePrueba.setY(obstaculo1_DePrueba.getY() - obstaculo2_DePrueba.getAlto());
         
         obstaculo3_DePrueba = new ObjetoInerte(imagen);
-        obstaculo3_DePrueba.setDimensiones(40, 110);
+        obstaculo3_DePrueba.setAncho(40);
+        obstaculo3_DePrueba.setAlto(110);
         obstaculo3_DePrueba.setX(suelo2_DePrueba.getX() + suelo2_DePrueba.getAncho() - 40);
         obstaculo3_DePrueba.setY(suelo2_DePrueba.getY() - obstaculo3_DePrueba.getAlto());
         
         //Piedra
         imagen = new Image("Nucleo/Recursos/Piedra/Piedra.png");
-        piedra1 = new Piedra(imagen);
+        piedra1 = new ObjetoRecogible(imagen);
         piedra1.setX(suelo1_DePrueba.getX() + 250);
         piedra1.setY(suelo1_DePrueba.getY() - piedra1.getAlto());
         
-        piedra2 = new Piedra(imagen);
+        piedra2 = new ObjetoRecogible(imagen);
         piedra2.setX(suelo1_DePrueba.getX() + 350);
         piedra2.setY(suelo1_DePrueba.getY() - piedra2.getAlto());
         
         imagen = new Image("Nucleo/Recursos/Aerosol.png");
-        aerosol1 = new Piedra(imagen);
+        aerosol1 = new ObjetoRecogible(imagen);
         aerosol1.setAncho(20);
         aerosol1.setAlto(60);
         aerosol1.setX(suelo1_DePrueba.getX() + suelo1_DePrueba.getAncho() - aerosol1.getAncho());
         aerosol1.setY(suelo1_DePrueba.getY() - aerosol1.getAlto());
         
         imagen = new Image("Nucleo/Recursos/Aerosol.png");
-        aerosol2 = new Piedra(imagen);
+        aerosol2 = new ObjetoRecogible(imagen);
         aerosol2.setAncho(20);
         aerosol2.setAlto(60);
         aerosol2.setX(ObjetoFlotanteDePrueba1.getX() + ObjetoFlotanteDePrueba1.getAncho() - aerosol2.getAncho());
         aerosol2.setY(ObjetoFlotanteDePrueba1.getY() - aerosol2.getAlto());
         
         imagen = new Image("Nucleo/Recursos/Aerosol.png");
-        aerosol3 = new Piedra(imagen);
+        aerosol3 = new ObjetoRecogible(imagen);
         aerosol3.setAncho(20);
         aerosol3.setAlto(60);
         aerosol3.setX(obstaculo2_DePrueba.getX() + obstaculo2_DePrueba.getAncho() - aerosol3.getAncho());
@@ -222,7 +246,7 @@ public class GraficosJuego extends Canvas {
         aerosol1.dibujar(lapiz);
         aerosol2.dibujar(lapiz);
         aerosol3.dibujar(lapiz);
-        mensajeDePrueba.dibujar(lapiz);
+        mensaje1DePrueba.dibujar(lapiz);
         mensaje2DePrueba.dibujar(lapiz);
         ObjetoFlotanteDePrueba1.dibujar(lapiz);
         ObjetoFlotanteDePrueba2.dibujar(lapiz);
@@ -232,8 +256,8 @@ public class GraficosJuego extends Canvas {
         obstaculo3_DePrueba.dibujar(lapiz);
         obstaculo1_DePrueba.dibujar(lapiz);
         obstaculo2_DePrueba.dibujar(lapiz);
-        enemigo1.dibujar(lapiz,jugador);
-        enemigo2.dibujar(lapiz,jugador);
+        enemigo1.dibujar(lapiz);
+        enemigo2.dibujar(lapiz);
         portal.dibujar(lapiz);
         jugador.dibujar(lapiz);
         
@@ -271,11 +295,11 @@ public class GraficosJuego extends Canvas {
         enemigos.add(enemigo1);
         enemigos.add(enemigo2);
         
-        ArrayList<Piedra> piedras = new ArrayList<>();
+        ArrayList<ObjetoRecogible> piedras = new ArrayList<>();
         piedras.add(piedra1);
         piedras.add(piedra2);
         
-        ArrayList<Piedra> aerosoles = new ArrayList<>(3);
+        ArrayList<ObjetoRecogible> aerosoles = new ArrayList<>(3);
         aerosoles.add(aerosol1);
         aerosoles.add(aerosol2);
         aerosoles.add(aerosol3);
@@ -292,7 +316,7 @@ public class GraficosJuego extends Canvas {
         aerosol3.actualizar(jugador);
         fondoDePrueba.actualizar(jugador);
         paredLimiteIzquierdo.actualizar(jugador);
-        mensajeDePrueba.actualizar(jugador);
+        mensaje1DePrueba.actualizar(jugador);
         mensaje2DePrueba.actualizar(jugador);
         ObjetoFlotanteDePrueba1.actualizar(jugador);
         ObjetoFlotanteDePrueba2.actualizar(jugador);

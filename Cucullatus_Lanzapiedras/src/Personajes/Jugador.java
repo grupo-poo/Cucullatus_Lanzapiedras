@@ -3,9 +3,8 @@ package Personajes;
 import Control.Teclado;
 import Escenario.ObjetoInerte;
 import Escenario.Pared;
-import Escenario.Piedra;
+import Escenario.ObjetoRecogible;
 import Nucleo.Debug;
-import Nucleo.ObjetoEscenario;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -14,64 +13,37 @@ import javafx.scene.shape.Rectangle;
 /**
  * Todas las mecanicas del Jugador se establecen aquí.
  */
-public class Jugador extends ObjetoEscenario{
+public class Jugador extends Personaje{
     
     private final int altoPantalla;
     private final int anchoPantalla;
     private byte pasos;   // Número de pixeles que debe recorrer por frame.
     private int velocidadHorizontal; // pixeles que recorre horizontalmente en tiempo real.
-    private int velocidadVertical; // pixeles que recorre verticalmente en tiempo real.
-    private int ancho, alto; // Dimensiones de la imagen del Jugador.
-    private int x, y; // Coordenadas del jugador en la pantalla.
     private int desplazamiento; // Cambia cada vez que el jugador se desplaaza.
     private boolean distanciaCritica; // true cuando esté en el punto donde x no cambia.
-    private Image imagen;
-    private int vida = 10;//Vida inicial del jugador
+    private int vida = 10; //Vida inicial del jugador
     private int piedras = 0; //Cantidad de piedras del jugador
     private int aerosoles = 0; //Cantidad de piedras del jugador
-    private Piedra piedra;
-    private boolean direccion; // Si es true el jugador mira a la derecha.
-    private boolean muerto;
-    
-    // Auxiliares para la gravedad.
-    private int countAuxForGravity = 0; // Contador auxiliar para la gravedad.
-    private int aceleracion = -1; // cambio de la velocidad con respecto a cada frame.
     
     // Auxiliares para la animación.
     private int secuencia = 1;//Numero de imagenes, empieza por 1
     private int cuenta= 0;//Ayuda a controlar la cantidad de veces que se pintan las imágenes
     
-    // Direcciones a las que la piedra es lanzada.
-    private boolean piedraDerecha = false;
-    private boolean piedraIzquierda = false;
-    private boolean piedraArriba = false;
-    private boolean piedraAbajo = false;
-  
-    
     public Jugador(Image imagen, int anchoPantalla, int altoPantalla) {
         this.altoPantalla = altoPantalla;
         this.anchoPantalla = anchoPantalla;
         this.imagen = imagen;
-        x = 40;
-        y = 150;
-        desplazamiento = x;
-        ancho = (int) imagen.getWidth();
-        alto  = (int) imagen.getHeight();
-        pasos = 3;
-        velocidadVertical = 1;
-        direccion = true;
+        this.x = 40;
+        this.y = 150;
+        this.desplazamiento = x;
+        this.ancho = (int) imagen.getWidth();
+        this.alto  = (int) imagen.getHeight();
+        this.pasos = 3;
+        this.velocidadVertical = 1;
+        this.direccion = true;
     }
     
-    /**
-     * *************************** METODO ALTERABLE ***************************
-     * 
-     * Este metodo dibuja al jugador.
-     * 
-     * Se le pueden añadir nuevos metodos si así se requiere o cualquier
-     * otra alteración de su estructura.
-     * 
-     * @param lapiz Objeto de graficos
-     */
+    @Override
     public void dibujar(GraphicsContext lapiz) {
         if (piedra != null) {
             piedra.dibujar(lapiz);
@@ -89,9 +61,12 @@ public class Jugador extends ObjetoEscenario{
      * otra alteración de su estructura.
      * @param obstaculos
      * @param enemigos
+     * @param paredes
+     * @param piedras
+     * @param aerosoles 
      */
     public void actualizar(ArrayList<ObjetoInerte> obstaculos, ArrayList<Enemigo> enemigos,
-            ArrayList<Pared> paredes, ArrayList<Piedra> piedras, ArrayList<Piedra> aerosoles) {
+            ArrayList<Pared> paredes, ArrayList<ObjetoRecogible> piedras, ArrayList<ObjetoRecogible> aerosoles) {
         velocidadHorizontal = desplazamiento;
         int distCrit = determinarDistanciaCritica();
         mover(obstaculos); // Aquí movemos al jugador.
@@ -120,51 +95,6 @@ public class Jugador extends ObjetoEscenario{
         Debug.lapiz.fillText("Piedras: " + this.piedras, 20, 102);
         Debug.lapiz.fillText("Aerosoles: " + this.aerosoles, 20, 126);
         //////////////////////////////////////////
-    }
-    
-    private void abatir(ArrayList<Enemigo> enemigos) {
-        if (piedra != null) {
-            for (Enemigo enemigo : enemigos) {
-                if (enemigo.getRectangulo().intersects(piedra.getRectangulo().getBoundsInLocal())) {
-                    enemigo.setMuerto(true);
-                    piedra = null;
-                    piedras--;
-                    abortarLanzamiento();
-                    break;
-                }
-            }
-        }
-    }
-    
-    private void revivirEnemigo(ArrayList<Enemigo> enemigos) {
-        for (Enemigo enemigo : enemigos) {
-            enemigo.setMuerto(false);
-        }
-    }
-    
-    private void desgraffitear(ArrayList<Pared> paredes) {
-        for (Pared pared : paredes) {
-            pared.setIsGraffiteada(false);
-        }
-    }
-    
-    private void reaparecerObjetos(ArrayList<Piedra> piedras) {
-        for (Piedra piedra : piedras) {
-            piedra.setVisible(true);
-        }
-    }
-    
-    private boolean intersectsEnemigo(ArrayList<Enemigo> enemigos) {
-        boolean hayIntercepcion = false;
-        for (Enemigo enemigo : enemigos) {
-            if (!enemigo.isMuerto()) {
-                if (enemigo.getRectangulo().intersects(this.getRectangulo().getBoundsInLocal())) {
-                    hayIntercepcion = true;
-                    break;
-                }
-            }
-        }
-        return hayIntercepcion;
     }
     
     /**
@@ -233,13 +163,6 @@ public class Jugador extends ObjetoEscenario{
         }
     }
     
-    private void crearPiedra() {
-        if (piedra == null) {
-            Image imagen = new Image("Nucleo/Recursos/Piedra/Piedra.png");
-            piedra = new Piedra(imagen, x, y + 20);
-        }
-    }
-    
     private void desplazarPiedraDerecha(ArrayList<ObjetoInerte> obstaculos) {
         if (piedraDerecha) {
             piedra.actualizar(this);
@@ -284,7 +207,8 @@ public class Jugador extends ObjetoEscenario{
         }
     }
     
-    public void eliminarPiedraSiSaleDeEscenario() {
+    @Override
+    protected void eliminarPiedraSiSaleDeEscenario() {
         if (piedra != null) {
             if (isFueraDeEscenario(piedra)) {
                 abortarLanzamiento();
@@ -294,14 +218,16 @@ public class Jugador extends ObjetoEscenario{
         }
     }
     
-    private void abortarLanzamiento() {
+    @Override
+    protected void abortarLanzamiento() {
         piedraAbajo = false;
         piedraArriba = false;
         piedraDerecha = false;
         piedraIzquierda = false;
     }
     
-    private boolean isFueraDeEscenario(Piedra piedra) {
+    @Override
+    protected boolean isFueraDeEscenario(ObjetoRecogible piedra) {
         return piedra.getX() > anchoPantalla || piedra.getX() + piedra.getAncho() < 0;
     }
     
@@ -322,7 +248,8 @@ public class Jugador extends ObjetoEscenario{
      * @return Devuelve true si el jugador intercepta con algo debajo de él.
      * @author Milton Lenis
      */
-    private boolean gravedad(ArrayList<ObjetoInerte> obstaculos) {
+    @Override
+    protected boolean gravedad(ArrayList<ObjetoInerte> obstaculos) {
         if(countAuxForGravity == 5) {
             countAuxForGravity = 0;
             velocidadVertical++;
@@ -353,7 +280,8 @@ public class Jugador extends ObjetoEscenario{
      * @param obstaculos array de obstaculos.
      * @author Milton Lenis
      */
-    private void saltar(ArrayList<ObjetoInerte> obstaculos, int alturaDeSalto) {
+    @Override
+    protected void saltar(ArrayList<ObjetoInerte> obstaculos, int alturaDeSalto) {
         if (aceleracion >= 0) {
             boolean hayAlgoArriba = !desplazarseArriba(obstaculos, alturaDeSalto);
             aceleracion = alturaDeSalto - velocidadVertical;
@@ -607,9 +535,9 @@ public class Jugador extends ObjetoEscenario{
         }
     }
     
-    public boolean recogerObjeto(ArrayList<Piedra> piedras){
+    public boolean recogerObjeto(ArrayList<ObjetoRecogible> piedras){
         boolean recoger = false;
-        for(Piedra piedra: piedras){
+        for(ObjetoRecogible piedra: piedras){
             if (piedra.isVisible()) {
                 if (piedra.getRectangulo().intersects(this.getRectangulo().getBoundsInLocal())) {
                     recoger = true;
@@ -641,17 +569,17 @@ public class Jugador extends ObjetoEscenario{
      * @return true si se ha superado la distancia critica y se a caido por un abismo.
      */
     private void respawn1(int distCritica, ArrayList<Enemigo> enemigos,
-            ArrayList<Pared> paredes, ArrayList<Piedra> piedras, ArrayList<Piedra> aerosoles){
+            ArrayList<Pared> paredes, ArrayList<ObjetoRecogible> piedras, ArrayList<ObjetoRecogible> aerosoles){
         if (muerto) {
             if (distanciaCritica) {
-                x = distCritica;
+                this.x = distCritica;
             } else {
-                x = 40;
+                this.x = 40;
             }
-            y = 200;
-            desplazamiento = x;
-            vida--;
-            piedra = null;
+            this.y = 200;
+            this.desplazamiento = x;
+            this.vida--;
+            this.piedra = null;
             this.piedras = 0;
             this.aerosoles = 0;
             abortarLanzamiento();
@@ -681,10 +609,50 @@ public class Jugador extends ObjetoEscenario{
             muerto = false;
         }
     }
-     
-    @Override
-    public Rectangle getRectangulo() {
-        return new Rectangle(x, y, ancho, alto);
+    
+    private void abatir(ArrayList<Enemigo> enemigos) {
+        if (piedra != null) {
+            for (Enemigo enemigo : enemigos) {
+                if (enemigo.getRectangulo().intersects(piedra.getRectangulo().getBoundsInLocal())) {
+                    enemigo.setMuerto(true);
+                    piedra = null;
+                    piedras--;
+                    abortarLanzamiento();
+                    break;
+                }
+            }
+        }
+    }
+    
+    private void revivirEnemigo(ArrayList<Enemigo> enemigos) {
+        for (Enemigo enemigo : enemigos) {
+            enemigo.setMuerto(false);
+        }
+    }
+    
+    private void desgraffitear(ArrayList<Pared> paredes) {
+        for (Pared pared : paredes) {
+            pared.setIsGraffiteada(false);
+        }
+    }
+    
+    private void reaparecerObjetos(ArrayList<ObjetoRecogible> piedras) {
+        for (ObjetoRecogible piedra : piedras) {
+            piedra.setVisible(true);
+        }
+    }
+    
+    private boolean intersectsEnemigo(ArrayList<Enemigo> enemigos) {
+        boolean hayIntercepcion = false;
+        for (Enemigo enemigo : enemigos) {
+            if (!enemigo.isMuerto()) {
+                if (enemigo.getRectangulo().intersects(this.getRectangulo().getBoundsInLocal())) {
+                    hayIntercepcion = true;
+                    break;
+                }
+            }
+        }
+        return hayIntercepcion;
     }
 
     public byte getPasos() {
@@ -711,38 +679,6 @@ public class Jugador extends ObjetoEscenario{
         this.velocidadVertical = velocidadVertical;
     }
 
-    public int getAncho() {
-        return ancho;
-    }
-
-    public void setAncho(int ancho) {
-        this.ancho = ancho;
-    }
-
-    public int getAlto() {
-        return alto;
-    }
-
-    public void setAlto(int alto) {
-        this.alto = alto;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
     public int getDesplazamiento() {
         return desplazamiento;
     }
@@ -758,14 +694,6 @@ public class Jugador extends ObjetoEscenario{
     public void setDistanciaCritica(boolean distanciaCritica) {
         this.distanciaCritica = distanciaCritica;
     }
-
-    public Image getImagen() {
-        return imagen;
-    }
-
-    public void setImagen(Image imagen) {
-        this.imagen = imagen;
-    }
     
     public int getVida() {
         return vida;
@@ -773,14 +701,6 @@ public class Jugador extends ObjetoEscenario{
 
     public void setVida(int vida) {
         this.vida = vida;
-    }
-
-    public boolean isMuerto() {
-        return muerto;
-    }
-
-    public void setMuerto(boolean muerto) {
-        this.muerto = muerto;
     }
     
 }
