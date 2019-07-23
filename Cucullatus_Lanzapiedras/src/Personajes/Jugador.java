@@ -5,6 +5,7 @@ import Escenario.ObjetoInerte;
 import Escenario.Pared;
 import Escenario.ObjetoRecogible;
 import Nucleo.Debug;
+import java.applet.AudioClip;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
@@ -31,6 +32,7 @@ public class Jugador extends Personaje{
     private int puntuacionPorNivel = 0;
     private int puntuacionTotal = 0;
     private String cronometro;
+    private static int i=0;//Control para la cantidad de sonidos en 1 salto
     
     // Auxiliares para el cronometro
     private int contadorAux = 0;
@@ -427,7 +429,9 @@ public class Jugador extends Personaje{
                 }
             }            
         }
-        if (viaLibre) { y -= (pasos * velocidad); }
+        if (viaLibre) { y -= (pasos * velocidad);
+        SonidoSalto();
+        }
         return viaLibre;
     }
     
@@ -693,6 +697,19 @@ public class Jugador extends Personaje{
             contadorAux++;
         }
         return "hh " + ((segundos/3600)%60) + " / mm " + ((segundos/60)%60) + " / ss " + (segundos%60);
+    }
+    
+    public void SonidoSalto(){
+        if(this.i==1){
+        AudioClip sonido;
+            sonido= java.applet.Applet.newAudioClip(getClass().getResource("/Nucleo/Recursos/Musica/Salto.wav"));
+            sonido.play();
+            
+        }
+        if(this.i==37){
+            i=0;
+        }
+        i++;
     }
 
     public byte getPasos() {
