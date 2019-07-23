@@ -34,7 +34,7 @@ public class GraficosJuego extends Canvas {
     private Jugador jugador;
     private Portal portal;
     
-    private int nivel = 1;
+    private int nivel;
     private final int altoPantalla;
     private final int anchoPantalla;
     private boolean ejecutandose;
@@ -43,7 +43,8 @@ public class GraficosJuego extends Canvas {
         super(anchoPantalla, altoPantalla);
         this.altoPantalla = (int) altoPantalla;
         this.anchoPantalla = (int) anchoPantalla;
-        ejecutandose = true;
+        this.ejecutandose = true;
+        this.nivel = 1;
         cargarJuego();
     }
 
@@ -119,6 +120,8 @@ public class GraficosJuego extends Canvas {
     private void cargarJugador() throws IOException {
         Image imagen = new Image("Nucleo/Recursos/Cucullatus.png");
         jugador = new Jugador(imagen, anchoPantalla, altoPantalla);
+        jugador.setAncho(42);
+        jugador.setAlto(65);
     }
     
     private void dibujar(GraphicsContext lapiz) {
@@ -178,13 +181,13 @@ public class GraficosJuego extends Canvas {
             ejecutandose = false;
         }
         if (portal.isCambiarNivel()) {
-            nivel++;
-            cargarEsceneraio();
             int valor = jugador.getEnmigosAbatidosPorNivel();
             jugador.setTotalEnemigosAbatidos(jugador.getTotalEnemigosAbatidos() + valor);
             valor = jugador.getPuntuacionPorNivel();
             jugador.setPuntuacionTotal(jugador.getPuntuacionTotal() + valor);
             jugador.setRespawn(true);
+            nivel++;
+            cargarEsceneraio();
         }
     }
     

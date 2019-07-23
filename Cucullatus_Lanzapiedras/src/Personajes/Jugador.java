@@ -54,22 +54,7 @@ public class Jugador extends Personaje{
         this.direccion = true;
     }
     
-    @Override
-    public void dibujar(GraphicsContext lapiz) {
-        if (piedra != null) {
-            piedra.dibujar(lapiz);
-        }
-        cronometro();
-        lapiz.drawImage(imagen, x, y, ancho, alto);
-        if (cronometro != null) {
-            lapiz.fillText("Tiempo de juego: " + cronometro, 20, 30);
-        }
-        lapiz.fillText("Muros que faltan por graffitear: " + murosFaltantes, 20, 44);
-        lapiz.fillText("Enemigos Abatidos: " + (enmigosAbatidosPorNivel + totalEnemigosAbatidos), 20, 58);
-        lapiz.fillText("Aerosoles Faltantes: " + aerosolesFaltantes, 20, 72);
-        lapiz.fillText("Puntuación: " + (puntuacionTotal + puntuacionPorNivel), 20, 86);
-        lapiz.fillText("Piedras: " + piedras, 20, 100);
-    }
+
     
     /**
      * *************************** METODO ALTERABLE ***************************
@@ -94,7 +79,6 @@ public class Jugador extends Personaje{
         respawn1(distCrit, enemigos, paredes, piedras, aerosoles);
         velocidadHorizontal = desplazamiento - velocidadHorizontal;
         respawn2();
-        animacion(); // Aquí se ejecuta la animación del jugador.
         lanzarPiedra(obstaculos);
         eliminarPiedraSiSaleDeEscenario();
         abatir(enemigos);
@@ -118,6 +102,7 @@ public class Jugador extends Personaje{
         Debug.lapiz.fillText("Aceleracion: " + aceleracion, anchoPantalla - 200, 90);
         Debug.lapiz.fillText("Piedras: " + this.piedras, anchoPantalla - 200, 102);
         Debug.lapiz.fillText("Aerosoles: " + this.aerosoles, anchoPantalla - 200, 114);
+        Debug.lapiz.fillText("Aeaaaaa: " + distCrit, anchoPantalla - 200, 140);
         //////////////////////////////////////////
     }
     
@@ -347,12 +332,9 @@ public class Jugador extends Personaje{
             } 
         }
         if (viaLibre) {
-            if ((desplazamiento - x) % pasos != 0) {
-                while ((desplazamiento - x) % pasos != 0) { desplazamiento--; }
-            } else {
-                desplazamiento -= pasos;
-                if (!distanciaCritica) { x = desplazamiento; }
-            }
+            while ((desplazamiento - xInit) % pasos != 0) { desplazamiento--;}
+            desplazamiento -= pasos;
+            if (!distanciaCritica) { x = desplazamiento; }
         }
         return viaLibre;
     }
@@ -388,12 +370,9 @@ public class Jugador extends Personaje{
             }
         }
         if (viaLibre) {
-            if ((desplazamiento - x) % pasos != 0) {
-                while ((desplazamiento - x) % pasos != 0) { desplazamiento++; }
-            } else { 
-                desplazamiento += pasos;
-                if (!distanciaCritica) { x = desplazamiento; } 
-            }
+            while ((desplazamiento - xInit) % pasos != 0) { desplazamiento++; }
+            desplazamiento += pasos;
+            if (!distanciaCritica) { x = desplazamiento; }
         }
         return viaLibre;
     }
@@ -541,6 +520,47 @@ public class Jugador extends Personaje{
                 cuenta++;
             }
         }
+    }
+    
+    @Override
+    public void dibujar(GraphicsContext lapiz) {
+        if (piedra != null) {
+            piedra.dibujar(lapiz);
+        }
+        cronometro();
+        
+        boolean moviendose = false;
+        if (velocidadHorizontal > 0) {
+            direccion = true;
+            moviendose = true;
+        } else if ( velocidadHorizontal < 0 ) {
+            direccion = false;
+            moviendose = true;
+        }
+        int aux = 1;
+        if (moviendose) {
+            if (cuenta == 30) {
+                cuenta = 0;
+            } else if (cuenta < 16) {
+                aux = 0;
+            }
+            cuenta++;
+        }
+        
+        if (direccion) {
+            lapiz.drawImage(imagen, aux*(imagen.getWidth()/2) , 0, (imagen.getWidth()/2), imagen.getHeight()/2 , x, y, ancho, alto);
+        } else {
+            lapiz.drawImage(imagen, aux*(imagen.getWidth()/2) , imagen.getHeight()/2, (imagen.getWidth()/2), imagen.getHeight()/2 , x, y, ancho, alto);
+        }
+        
+        if (cronometro != null) {
+            lapiz.fillText("Tiempo de juego: " + cronometro, 20, 30);
+        }
+        lapiz.fillText("Muros que faltan por graffitear: " + murosFaltantes, 20, 44);
+        lapiz.fillText("Enemigos Abatidos: " + (enmigosAbatidosPorNivel + totalEnemigosAbatidos), 20, 58);
+        lapiz.fillText("Aerosoles Faltantes: " + aerosolesFaltantes, 20, 72);
+        lapiz.fillText("Puntuación: " + (puntuacionTotal + puntuacionPorNivel), 20, 86);
+        lapiz.fillText("Piedras: " + piedras, 20, 100);
     }
     
     public void graffitear(Pared[] paredes){
